@@ -69,6 +69,7 @@ func GenerateCSR(
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
 			keyUsageExtension(),
+			extendedKeyUsageExtension(),
 		},
 	}, key)
 	if err != nil {
@@ -102,6 +103,20 @@ func keyUsageExtension() pkix.Extension {
 	return pkix.Extension{
 		Id: asn1.ObjectIdentifier{2, 5, 29, 15},
 		Critical: true,
+		Value: d,
+	}
+}
+
+func extendedKeyUsageExtension() pkix.Extension {
+	x := []asn1.ObjectIdentifier{
+		asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1},
+		asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2},
+	}
+	d, _ := asn1.Marshal(x)
+
+	return pkix.Extension{
+		Id: asn1.ObjectIdentifier{2, 5, 29, 37},
+		Critical: false,
 		Value: d,
 	}
 }
