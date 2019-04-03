@@ -252,25 +252,12 @@ func Serialize(roles []string, ca CompetentAuthority) ([]byte, error) {
 
 // Dump outputs to stdout a human-readable representation of an encoded qualified statement.
 func Dump(d []byte) error {
-	var root root
-	_, err := asn1.Unmarshal(d, &root)
+	roles, name, id, err := Extract(d)
 	if err != nil {
-		return fmt.Errorf("Failed to decode asn.1: %v", err)
+		return fmt.Errorf("eidas: %v", err)
 	}
 
-	roles := make([]string, 0)
-	for _, v := range root.QcStatement.RolesInfo.Roles.Roles {
-		if v.Tag == asn1.TagUTF8String {
-			var dec string
-			_, err := asn1.Unmarshal(v.FullBytes, &dec)
-			if err != nil {
-				return fmt.Errorf("failed to decode role string: %v", err)
-			}
-			roles = append(roles, dec)
-		}
-	}
-
-	fmt.Printf("CA { Name: %s ID: %s } Roles: %v\n", root.QcStatement.RolesInfo.CAName, root.QcStatement.RolesInfo.CAID, roles)
+	fmt.Printf("CA { Name: %s ID: %s } Roles: %v\n", name, id, roles)
 	return nil
 }
 
