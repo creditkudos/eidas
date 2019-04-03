@@ -1,6 +1,12 @@
 package eidas
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"strings"
@@ -43,4 +49,59 @@ func GenerateCSRConfigFile(
 		return "", fmt.Errorf("eidas: failed to execute template: %v", err)
 	}
 	return out.String(), nil
+}
+
+func GenerateCSR(
+	countryCode string, orgName string, orgID string, commonName string, roles []string) ([]byte, error) {
+	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate key pair: %v", err)
+	}
+
+	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
+		Version: 0,
+		Subject: pkix.Name{
+			CommonName:   commonName,
+			Country:      []string{countryCode},
+			Organization: []string{orgName},
+		},
+		SignatureAlgorithm: x509.SHA256WithRSA,
+		PublicKeyAlgorithm: x509.RSA,
+		ExtraExtensions: []pkix.Extension{
+			keyUsageExtension(),
+		},
+	}, key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate csr: %v", err)
+	}
+	return csr, nil
+}
+
+const (
+	digitalSignature = 0
+	nonRepudiation = 1
+	keyEncipherment = 2
+	dataEncipherment = 3
+	keyAgreement = 4
+	keyCertSign = 5
+	cRLSign = 6
+	encipherOnly = 7
+	decipherOnly = 8
+)
+
+func keyUsageExtension() pkix.Extension {
+	x := uint16(0)
+	x |= (uint16(1) << digitalSignature)
+	b := make([]byte, 2)
+	binary.LittleEndian.PutUint16(b, x)
+	bits := asn1.BitString{
+		Bytes: b,
+		BitLength: decipherOnly + 1,
+	}
+	d, _ := asn1.Marshal(bits)
+	return pkix.Extension{
+		Id: asn1.ObjectIdentifier{2, 5, 29, 15},
+		Critical: true,
+		Value: d,
+	}
 }

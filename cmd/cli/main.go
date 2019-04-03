@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/pem"
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/creditkudos/eidas"
@@ -25,4 +27,22 @@ func main() {
 		log.Fatalf("Failed to generate CSR: %v", err)
 	}
 	fmt.Println(out)
+
+	d, err := eidas.GenerateCSR(
+		*countryCode, *orgName, *orgID, *commonName, strings.Split(*roles, ","))
+	if err != nil {
+		log.Fatalf(":-( %v", err)
+	}
+
+	f, err := os.OpenFile("out.csr", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		log.Fatalf("Failed to create file: %v", err)
+	}
+	pem.Encode(f, &pem.Block{
+		Type: "CERTIFICATE REQUEST",
+		Bytes: d,
+	})
+	if err := f.Close(); err != nil {
+		log.Fatalf("failed to write csr: %v", err)
+	}
 }
