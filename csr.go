@@ -44,9 +44,9 @@ func GenerateCSR(
 			CommonName:   commonName,
 			Country:      []string{countryCode},
 			Organization: []string{orgName},
-			ExtraNames:   []pkix.AttributeTypeAndValue{
+			ExtraNames: []pkix.AttributeTypeAndValue{
 				pkix.AttributeTypeAndValue{
-					Type: asn1.ObjectIdentifier{2, 5, 4, 97},
+					Type:  asn1.ObjectIdentifier{2, 5, 4, 97},
 					Value: orgID,
 				},
 			},
