@@ -75,7 +75,7 @@ func GenerateCSR(
 		Subject: pkix.Name{
 			CommonName:   commonName,
 			Country:      []string{countryCode},
-			Organization: []string{orgName+"/2.5.4.97="+orgID},
+			Organization: []string{orgName + "/2.5.4.97=" + orgID},
 		},
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
@@ -94,14 +94,14 @@ func GenerateCSR(
 
 const (
 	digitalSignature = 0
-	nonRepudiation = 1
-	keyEncipherment = 2
+	nonRepudiation   = 1
+	keyEncipherment  = 2
 	dataEncipherment = 3
-	keyAgreement = 4
-	keyCertSign = 5
-	cRLSign = 6
-	encipherOnly = 7
-	decipherOnly = 8
+	keyAgreement     = 4
+	keyCertSign      = 5
+	cRLSign          = 6
+	encipherOnly     = 7
+	decipherOnly     = 8
 )
 
 func keyUsageExtension() pkix.Extension {
@@ -110,14 +110,14 @@ func keyUsageExtension() pkix.Extension {
 	b := make([]byte, 2)
 	binary.LittleEndian.PutUint16(b, x)
 	bits := asn1.BitString{
-		Bytes: b,
+		Bytes:     b,
 		BitLength: decipherOnly + 1,
 	}
 	d, _ := asn1.Marshal(bits)
 	return pkix.Extension{
-		Id: asn1.ObjectIdentifier{2, 5, 29, 15},
+		Id:       asn1.ObjectIdentifier{2, 5, 29, 15},
 		Critical: true,
-		Value: d,
+		Value:    d,
 	}
 }
 
@@ -129,9 +129,9 @@ func extendedKeyUsageExtension() pkix.Extension {
 	d, _ := asn1.Marshal(x)
 
 	return pkix.Extension{
-		Id: asn1.ObjectIdentifier{2, 5, 29, 37},
+		Id:       asn1.ObjectIdentifier{2, 5, 29, 37},
 		Critical: false,
-		Value: d,
+		Value:    d,
 	}
 }
 
@@ -143,16 +143,16 @@ func subjectKeyIdentifier(key rsa.PublicKey) pkix.Extension {
 	}
 
 	return pkix.Extension{
-		Id: asn1.ObjectIdentifier{2, 5, 29, 14},
+		Id:       asn1.ObjectIdentifier{2, 5, 29, 14},
 		Critical: false,
-		Value: d,
+		Value:    d,
 	}
 }
 
 func qcStatementsExtension(data []byte) pkix.Extension {
 	return pkix.Extension{
-		Id: asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3},
+		Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3},
 		Critical: false,
-		Value: data,
+		Value:    data,
 	}
 }
