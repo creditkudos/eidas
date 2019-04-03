@@ -3,12 +3,14 @@ package eidas
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha1"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"strings"
 	"text/template"
 )
@@ -70,6 +72,7 @@ func GenerateCSR(
 		ExtraExtensions: []pkix.Extension{
 			keyUsageExtension(),
 			extendedKeyUsageExtension(),
+			subjectKeyIdentifier(key.PublicKey),
 		},
 	}, key)
 	if err != nil {
@@ -116,6 +119,20 @@ func extendedKeyUsageExtension() pkix.Extension {
 
 	return pkix.Extension{
 		Id: asn1.ObjectIdentifier{2, 5, 29, 37},
+		Critical: false,
+		Value: d,
+	}
+}
+
+func subjectKeyIdentifier(key rsa.PublicKey) pkix.Extension {
+	b := sha1.Sum(x509.MarshalPKCS1PublicKey(&key))
+	d, err := asn1.Marshal(b[:])
+	if err != nil {
+		log.Fatalf("failed to marshal subject key identifier: %v", err)
+	}
+
+	return pkix.Extension{
+		Id: asn1.ObjectIdentifier{2, 5, 29, 14},
 		Critical: false,
 		Value: d,
 	}
