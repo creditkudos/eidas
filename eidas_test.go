@@ -104,3 +104,14 @@ func TestAll(t *testing.T) {
 		}
 	}
 }
+
+func TestQSEAL(t *testing.T) {
+	pspAS := "305b3013060604008e4601063009060704008e4601060230440606040081982702303a301330110607040081982701010c065053505f41530c1b46696e616e6369616c20436f6e6475637420417574686f726974790c0647422d464341"
+	d, err := Serialize([]string{"PSP_AS"}, defaultCA, QSEALType)
+	if err != nil {
+		t.Error(err)
+	}
+	if hex.EncodeToString(d) != pspAS {
+		t.Error("Mismatch with PSP_AS")
+	}
+}
