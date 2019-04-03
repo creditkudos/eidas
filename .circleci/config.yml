@@ -1,0 +1,8 @@
+version: 2.1
+orbs:
+  ck: creditkudos/main@volatile
+workflows:
+  all:
+    jobs:
+      - ck/go_test
+      - ck/go_lint
