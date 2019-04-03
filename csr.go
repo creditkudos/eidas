@@ -63,7 +63,7 @@ func GenerateCSR(
 		Subject: pkix.Name{
 			CommonName:   commonName,
 			Country:      []string{countryCode},
-			Organization: []string{orgName},
+			Organization: []string{orgName+"/2.5.4.97="+orgID},
 		},
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
