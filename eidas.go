@@ -41,6 +41,7 @@ type rawRoles struct {
 	Roles []asn1.RawValue
 }
 
+// Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement.
 func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles)*2)
 	for i, rv := range roles {
@@ -94,6 +95,7 @@ func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 	return fin, nil
 }
 
+// Dump outputs to stdout a human-readable representation of an encoded qualified statement.
 func Dump(d []byte) error {
 	var root root
 	_, err := asn1.Unmarshal(d, &root)
@@ -117,6 +119,7 @@ func Dump(d []byte) error {
 	return nil
 }
 
+// Dump outputs to stdout a human-readable representation of a hex encoded qualified statement.
 func DumpFromHex(h string) error {
 	d, err := hex.DecodeString(h)
 	if err != nil {
