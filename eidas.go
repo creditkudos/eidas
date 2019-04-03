@@ -6,11 +6,22 @@ import (
 	"fmt"
 )
 
+const (
+	// Account servicing role.
+	RoleAccountServicing = "PSP_AS"
+	// Payment initiation role.
+	RolePaymentInitiation = "PSP_PI"
+	// Account information role.
+	RoleAccountInformation = "PSP_AI"
+	// Issuing of card-based payment instruments role.
+	RolePaymentInstruments = "PSP_IC"
+)
+
 var roleMap = map[string]int{
-	"PSP_AS": 1,
-	"PSP_PI": 2,
-	"PSP_AI": 3,
-	"PSP_IC": 4,
+	RoleAccountServicing:   1,
+	RolePaymentInitiation:  2,
+	RoleAccountInformation: 3,
+	RolePaymentInstruments: 4,
 }
 
 type root struct {
