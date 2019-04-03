@@ -54,20 +54,20 @@ func GenerateCSRConfigFile(
 }
 
 func GenerateCSR(
-	countryCode string, orgName string, orgID string, commonName string, roles []string) ([]byte, error) {
+	countryCode string, orgName string, orgID string, commonName string, roles []string) ([]byte, *rsa.PrivateKey, error) {
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate key pair: %v", err)
+		return nil, nil, fmt.Errorf("failed to generate key pair: %v", err)
 	}
 
 	ca, err := CompetentAuthorityForCountryCode(countryCode)
 	if err != nil {
-		return nil, fmt.Errorf("eidas: %v", err)
+		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
 
 	qc, err := Serialize(roles, *ca)
 	if err != nil {
-		return nil, fmt.Errorf("eidas: %v", err)
+		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
 
 	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
@@ -92,9 +92,9 @@ func GenerateCSR(
 		},
 	}, key)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate csr: %v", err)
+		return nil, nil, fmt.Errorf("failed to generate csr: %v", err)
 	}
-	return csr, nil
+	return csr, key, nil
 }
 
 type KeyUsage uint

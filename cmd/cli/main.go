@@ -28,7 +28,7 @@ func main() {
 	}
 	fmt.Println(out)
 
-	d, err := eidas.GenerateCSR(
+	d, _, err := eidas.GenerateCSR(
 		*countryCode, *orgName, *orgID, *commonName, strings.Split(*roles, ","))
 	if err != nil {
 		log.Fatalf(":-( %v", err)
