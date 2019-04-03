@@ -127,3 +127,25 @@ func DumpFromHex(h string) {
 		}
 	}
 }
+
+func Extract(data []byte) ([]string, string, string, error) {
+	var root Root
+	_, err := asn1.Unmarshal(data, &root)
+	if err != nil {
+		return nil, "", "", fmt.Errorf("failed to decode eIDAS: %v", err)
+	}
+
+	roles := make([]string, 0)
+	for _, v := range root.QcStatement.RolesInfo.Roles.Roles {
+		if v.Tag == asn1.TagUTF8String {
+			var dec string
+			_, err := asn1.Unmarshal(v.FullBytes, &dec)
+			if err != nil {
+				return nil, "", "", fmt.Errorf("failed to decode eIDAS role: %v", err)
+			}
+			roles = append(roles, dec)
+		}
+	}
+
+	return roles, root.QcStatement.RolesInfo.CAName, root.QcStatement.RolesInfo.CAID, nil
+}

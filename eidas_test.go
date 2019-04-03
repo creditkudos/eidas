@@ -41,12 +41,34 @@ func TestAll(t *testing.T) {
 		Roles: []string{"PSP_AS", "PSP_PI"},
 	}}
 	for _, e := range expected {
+		// Check our serialization matches theirs.
 		s, err := Serialize(e.Roles, defaultCAName, defaultCAID)
 		if err != nil {
 			t.Error(err)
 		}
 		if hex.EncodeToString(s) != e.Expected {
 			t.Errorf("Mismatch with roles: %v", e.Roles)
+		}
+
+		// Check we can extract the roles, name and ID correctly.
+		d, err := hex.DecodeString(e.Expected)
+		if err != nil {
+			t.Error(err)
+		}
+		roles, name, id, err := Extract(d)
+		if err != nil {
+			t.Error(err)
+		}
+		for i, r := range roles {
+			if e.Roles[i] != r {
+				t.Errorf("Expected role: %s but got %s", e.Roles[i], r)
+			}
+		}
+		if name != defaultCAName {
+			t.Errorf("Expected CA name: %s but got %s", defaultCAName, name)
+		}
+		if id != defaultCAID {
+			t.Errorf("Expected CA id: %s but got %s", defaultCAID, id)
 		}
 	}
 }
