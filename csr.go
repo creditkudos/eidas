@@ -13,7 +13,7 @@ import (
 )
 
 func GenerateCSR(
-	countryCode string, orgName string, orgID string, commonName string, roles []string) ([]byte, *rsa.PrivateKey, error) {
+	countryCode string, orgName string, orgID string, commonName string, roles []string, qcType asn1.ObjectIdentifier) ([]byte, *rsa.PrivateKey, error) {
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate key pair: %v", err)
@@ -24,7 +24,7 @@ func GenerateCSR(
 		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
 
-	qc, err := Serialize(roles, *ca)
+	qc, err := Serialize(roles, *ca, qcType)
 	if err != nil {
 		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}

@@ -179,12 +179,9 @@ type qcType struct {
 }
 
 var (
-	// Also known as QSIGN
-	esign = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 1}
-	// Also known as QSEAL
-	eseal = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
-	// Also known as QWAC
-	web = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
+	QSIGNType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 1}
+	QSEALType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
+	QWACType  = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
 )
 
 type qcStatement struct {
@@ -205,8 +202,8 @@ type rawRoles struct {
 	Roles []asn1.RawValue
 }
 
-// Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement.
-func Serialize(roles []string, ca CompetentAuthority) ([]byte, error) {
+// Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement. qcType should be one of ESignType, ESEALType or WEBType.
+func Serialize(roles []string, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles)*2)
 	for i, rv := range roles {
 		if _, ok := roleMap[rv]; !ok {
@@ -237,10 +234,8 @@ func Serialize(roles []string, ca CompetentAuthority) ([]byte, error) {
 
 	fin, err := asn1.Marshal(root{
 		qcType{
-			OID: asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6},
-			Detail: []asn1.ObjectIdentifier{
-				asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3},
-			},
+			OID:    asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6},
+			Detail: []asn1.ObjectIdentifier{t},
 		},
 		qcStatement{
 			OID: asn1.ObjectIdentifier{0, 4, 0, 19495, 2},

@@ -3,8 +3,10 @@ package main
 import (
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/asn1"
 	"encoding/pem"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -17,6 +19,7 @@ var orgName = flag.String("organization-name", "Credit Kudos", "Organization nam
 var orgID = flag.String("organization-id", "123456", "Organization ID")
 var commonName = flag.String("common-name", "abcdef", "Common Name")
 var roles = flag.String("roles", eidas.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
+var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC, QSIGN or QSEAL")
 
 var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
 var outKey = flag.String("key", "out.key", "Output file for private key")
@@ -62,11 +65,27 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 	})
 }
 
+func typeFromFlag(in string) (asn1.ObjectIdentifier, error) {
+	if in == "QSIGN" {
+		return eidas.QSIGNType, nil
+	} else if in == "QWAC" {
+		return eidas.QWACType, nil
+	} else if in == "QSEAL" {
+		return eidas.QSEALType, nil
+	}
+	return nil, fmt.Errorf("Unknown QC type: %s", in)
+}
+
 func main() {
 	flag.Parse()
 
+	t, err := typeFromFlag(*qcType)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	d, key, err := eidas.GenerateCSR(
-		*countryCode, *orgName, *orgID, *commonName, strings.Split(*roles, ","))
+		*countryCode, *orgName, *orgID, *commonName, strings.Split(*roles, ","), t)
 	if err != nil {
 		log.Fatalf(":-( %v", err)
 	}
