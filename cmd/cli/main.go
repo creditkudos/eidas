@@ -15,9 +15,9 @@ import (
 )
 
 var countryCode = flag.String("country-code", "GB", "ISO-3166-1 Alpha 2 country code")
-var orgName = flag.String("organization-name", "Credit Kudos", "Organization name")
-var orgID = flag.String("organization-id", "123456", "Organization ID")
-var commonName = flag.String("common-name", "abcdef", "Common Name")
+var orgName = flag.String("organization-name", "Credit Kudos Limited", "Organization name")
+var orgID = flag.String("organization-id", "PSDGB-FCA-795791", "Organization ID")
+var commonName = flag.String("common-name", "001580000103UAbAAM", "Common Name")
 var roles = flag.String("roles", eidas.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
 var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC, QSIGN or QSEAL")
 
