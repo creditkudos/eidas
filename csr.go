@@ -8,7 +8,7 @@ import (
 )
 
 func GenerateCSRConfigFile(
-		countryCode string, orgName string, orgID string, commonName string, roles []string) (string, error) {
+	countryCode string, orgName string, orgID string, commonName string, roles []string) (string, error) {
 	ca, err := CompetentAuthorityForCountryCode(countryCode)
 	if err != nil {
 		return "", fmt.Errorf("eidas: %v", err)
@@ -24,18 +24,18 @@ func GenerateCSRConfigFile(
 	}
 
 	out := &strings.Builder{}
-	err = tmpl.Execute(out, struct{
-		CountryCode string
-		OrganizationName string
+	err = tmpl.Execute(out, struct {
+		CountryCode            string
+		OrganizationName       string
 		OrganizationIdentifier string
-		CommonName string
-		QCStatement string
+		CommonName             string
+		QCStatement            string
 	}{
-		CountryCode: countryCode,
-		OrganizationName: orgName,
+		CountryCode:            countryCode,
+		OrganizationName:       orgName,
 		OrganizationIdentifier: orgID,
-		CommonName: commonName,
-		QCStatement: hex.EncodeToString(qc),
+		CommonName:             commonName,
+		QCStatement:            hex.EncodeToString(qc),
 	})
 	if err != nil {
 		return "", fmt.Errorf("eidas: failed to execute template: %v", err)
