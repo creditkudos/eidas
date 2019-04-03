@@ -66,44 +66,30 @@ func GenerateCSR(
 	return csr, key, nil
 }
 
-func keyUsageForType(t asn1.ObjectIdentifier) ([]KeyUsage, error) {
+func keyUsageForType(t asn1.ObjectIdentifier) ([]x509.KeyUsage, error) {
 	if t[len(t)-1] == QWACType[len(QWACType)-1] {
-		return []KeyUsage{
-			DigitalSignature,
+		return []x509.KeyUsage{
+			x509.KeyUsageDigitalSignature,
 		}, nil
 	} else if t[len(t)-1] == QSEALType[len(QWACType)-1] {
-		return []KeyUsage{
-			DigitalSignature,
-			NonRepudiation,
+		return []x509.KeyUsage{
+			x509.KeyUsageDigitalSignature,
+			x509.KeyUsageContentCommitment, // Also known as NonRepudiation.
 		}, nil
 	}
 	return nil, fmt.Errorf("unknown QC type: %v", t)
 }
 
-type KeyUsage uint
-
-const (
-	DigitalSignature KeyUsage = 0
-	NonRepudiation   KeyUsage = 1
-	KeyEncipherment  KeyUsage = 2
-	DataEncipherment KeyUsage = 3
-	KeyAgreement     KeyUsage = 4
-	KeyCertSign      KeyUsage = 5
-	CRLSign          KeyUsage = 6
-	EncipherOnly     KeyUsage = 7
-	DecipherOnly     KeyUsage = 8
-)
-
-func KeyUsageExtension(usages []KeyUsage) pkix.Extension {
+func KeyUsageExtension(usages []x509.KeyUsage) pkix.Extension {
 	x := uint16(0)
 	for _, usage := range usages {
-		x |= (uint16(1) << (7 - uint(usage)))
+		x |= (uint16(1) << (8 - uint(usage)))
 	}
 	b := make([]byte, 2)
 	binary.LittleEndian.PutUint16(b, x)
 	bits := asn1.BitString{
 		Bytes:     b,
-		BitLength: int(DecipherOnly) + 1,
+		BitLength: int(x509.KeyUsageDecipherOnly),
 	}
 	d, _ := asn1.Marshal(bits)
 	return pkix.Extension{
