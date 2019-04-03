@@ -94,14 +94,9 @@ func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 	return fin, nil
 }
 
-func DumpFromHex(h string) error {
-	d, err := hex.DecodeString(h)
-	if err != nil {
-		return fmt.Errorf("Failed to decode hex: %v", err)
-	}
-
+func Dump(d []byte) error {
 	var root root
-	_, err = asn1.Unmarshal(d, &root)
+	_, err := asn1.Unmarshal(d, &root)
 	if err != nil {
 		return fmt.Errorf("Failed to decode asn.1: %v", err)
 	}
@@ -120,6 +115,15 @@ func DumpFromHex(h string) error {
 
 	fmt.Printf("CA { Name: %s ID: %s } Roles: %v\n", root.QcStatement.RolesInfo.CAName, root.QcStatement.RolesInfo.CAID, roles)
 	return nil
+}
+
+func DumpFromHex(h string) error {
+	d, err := hex.DecodeString(h)
+	if err != nil {
+		return fmt.Errorf("Failed to decode hex: %v", err)
+	}
+
+	return Dump(d)
 }
 
 func Extract(data []byte) ([]string, string, string, error) {
