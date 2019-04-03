@@ -14,37 +14,37 @@ var roleMap = map[string]int{
 	"PSP_IC": 4,
 }
 
-type Root struct {
-	QcType
-	QcStatement
+type root struct {
+	QcType      qcType
+	QcStatement qcStatement
 }
 
-type QcType struct {
+type qcType struct {
 	OID    asn1.ObjectIdentifier
 	Detail []asn1.ObjectIdentifier
 }
 
-type QcStatement struct {
-	OID asn1.ObjectIdentifier
-	RolesInfo
+type qcStatement struct {
+	OID       asn1.ObjectIdentifier
+	RolesInfo rolesInfo
 }
 
-type RolesInfo struct {
-	Roles
+type rolesInfo struct {
+	Roles  roles
 	CAName string `asn1:"utf8"`
 	CAID   string `asn1:"utf8"`
 }
 
-type Roles struct {
+type roles struct {
 	// eIDAS roles consist a sequence of an object identifier and a UTF8 string for each role
 	// Unfortunately, the asn1 package cannot cope with non-uniform arrays so RawValues must
 	// be used here and then decoded further elsewhere.
 	Roles []asn1.RawValue
 }
 
-func Serialize(roles []string, caName string, caID string) ([]byte, error) {
-	r := make([]asn1.RawValue, len(roles)*2)
-	for i, rv := range roles {
+func Serialize(rs []string, caName string, caID string) ([]byte, error) {
+	r := make([]asn1.RawValue, len(rs)*2)
+	for i, rv := range rs {
 		d, err := asn1.Marshal(asn1.ObjectIdentifier(
 			[]int{0, 4, 0, 19495, 1, roleMap[rv]}))
 		if err != nil {
@@ -68,17 +68,17 @@ func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 		}
 	}
 
-	fin, err := asn1.Marshal(Root{
-		QcType{
+	fin, err := asn1.Marshal(root{
+		qcType{
 			OID: asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6},
 			Detail: []asn1.ObjectIdentifier{
 				asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3},
 			},
 		},
-		QcStatement{
+		qcStatement{
 			OID: asn1.ObjectIdentifier{0, 4, 0, 19495, 2},
-			RolesInfo: RolesInfo{
-				Roles: Roles{
+			RolesInfo: rolesInfo{
+				Roles: roles{
 					Roles: r,
 				},
 				CAName: caName,
@@ -98,7 +98,7 @@ func DumpFromHex(h string) {
 		log.Fatalf("Failed to decode hex: %v", err)
 	}
 
-	var root Root
+	var root root
 	rest, err := asn1.Unmarshal(d, &root)
 	if err != nil {
 		log.Fatalf("Failed to decode asn.1: %v", err)
@@ -126,7 +126,7 @@ func DumpFromHex(h string) {
 }
 
 func Extract(data []byte) ([]string, string, string, error) {
-	var root Root
+	var root root
 	_, err := asn1.Unmarshal(data, &root)
 	if err != nil {
 		return nil, "", "", fmt.Errorf("failed to decode eIDAS: %v", err)
