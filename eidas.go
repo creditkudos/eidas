@@ -30,21 +30,21 @@ type qcStatement struct {
 }
 
 type rolesInfo struct {
-	Roles  roles
+	Roles  rawRoles
 	CAName string `asn1:"utf8"`
 	CAID   string `asn1:"utf8"`
 }
 
-type roles struct {
+type rawRoles struct {
 	// eIDAS roles consist a sequence of an object identifier and a UTF8 string for each role
 	// Unfortunately, the asn1 package cannot cope with non-uniform arrays so RawValues must
 	// be used here and then decoded further elsewhere.
 	Roles []asn1.RawValue
 }
 
-func Serialize(rs []string, caName string, caID string) ([]byte, error) {
-	r := make([]asn1.RawValue, len(rs)*2)
-	for i, rv := range rs {
+func Serialize(roles []string, caName string, caID string) ([]byte, error) {
+	r := make([]asn1.RawValue, len(roles)*2)
+	for i, rv := range roles {
 		if _, ok := roleMap[rv]; !ok {
 			return nil, fmt.Errorf("Unknown role: %s", rv)
 		}
@@ -81,7 +81,7 @@ func Serialize(rs []string, caName string, caID string) ([]byte, error) {
 		qcStatement{
 			OID: asn1.ObjectIdentifier{0, 4, 0, 19495, 2},
 			RolesInfo: rolesInfo{
-				Roles: roles{
+				Roles: rawRoles{
 					Roles: r,
 				},
 				CAName: caName,
