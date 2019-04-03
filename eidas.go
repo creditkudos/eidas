@@ -45,6 +45,9 @@ type roles struct {
 func Serialize(rs []string, caName string, caID string) ([]byte, error) {
 	r := make([]asn1.RawValue, len(rs)*2)
 	for i, rv := range rs {
+		if _, ok := roleMap[rv]; !ok {
+			return nil, fmt.Errorf("Unknown role: %s", rv)
+		}
 		d, err := asn1.Marshal(asn1.ObjectIdentifier(
 			[]int{0, 4, 0, 19495, 1, roleMap[rv]}))
 		if err != nil {
