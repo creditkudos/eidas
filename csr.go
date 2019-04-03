@@ -30,12 +30,14 @@ func GenerateCSRConfigFile(
 		OrganizationIdentifier string
 		CommonName             string
 		QCStatement            string
+		Roles                  string
 	}{
 		CountryCode:            countryCode,
 		OrganizationName:       orgName,
 		OrganizationIdentifier: orgID,
 		CommonName:             commonName,
 		QCStatement:            hex.EncodeToString(qc),
+		Roles:                  strings.Join(roles, ","),
 	})
 	if err != nil {
 		return "", fmt.Errorf("eidas: failed to execute template: %v", err)

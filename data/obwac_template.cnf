@@ -2,7 +2,7 @@
 # OPENSSL CSR REQUEST CONFIGURATION FILE
 # ======================================
 #
-# OBWAC qualified client certificate request with PSD2 role: PSP_PI PSP_AI
+# OBWAC qualified client certificate request with PSD2 roles: [{{.Roles}}]
 # ------------------------------------------------------------------------
 # See latest specification: ETSI TS 119 495 V1.2.1 (2018-11)
 # https://www.etsi.org/deliver/etsi_ts/119400_119499/119495/01.02.01_60/ts_119495v010201p.pdf
