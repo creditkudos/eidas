@@ -19,6 +19,7 @@ func TestSimple(t *testing.T) {
 	}
 }
 
+// TestAll tests against all the example data in "eIDAS PSD2 Certificate Signing Request Profiles", dated 12th March 2019.
 func TestAll(t *testing.T) {
 	type testData struct{
 		Expected string
