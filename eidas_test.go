@@ -70,6 +70,7 @@ func TestAll(t *testing.T) {
 	}}
 
 	for _, e := range expected {
+		DumpFromHex(e.Expected)
 		// Check our serialization matches theirs.
 		s, err := Serialize(e.Roles, defaultCAName, defaultCAID)
 		if err != nil {

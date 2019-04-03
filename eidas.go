@@ -4,7 +4,6 @@ import (
 	"encoding/asn1"
 	"encoding/hex"
 	"fmt"
-	"log"
 )
 
 var roleMap = map[string]int{
@@ -95,37 +94,32 @@ func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 	return fin, nil
 }
 
-func DumpFromHex(h string) {
+func DumpFromHex(h string) error {
 	d, err := hex.DecodeString(h)
 	if err != nil {
-		log.Fatalf("Failed to decode hex: %v", err)
+		return fmt.Errorf("Failed to decode hex: %v", err)
 	}
 
 	var root root
-	rest, err := asn1.Unmarshal(d, &root)
+	_, err = asn1.Unmarshal(d, &root)
 	if err != nil {
-		log.Fatalf("Failed to decode asn.1: %v", err)
+		return fmt.Errorf("Failed to decode asn.1: %v", err)
 	}
-	log.Printf("%d left", len(rest))
-	log.Printf("%+v", root)
 
+	roles := make([]string, 0)
 	for _, v := range root.QcStatement.RolesInfo.Roles.Roles {
 		if v.Tag == asn1.TagUTF8String {
 			var dec string
 			_, err := asn1.Unmarshal(v.FullBytes, &dec)
 			if err != nil {
-				log.Printf(":-( %v", err)
+				return fmt.Errorf("failed to decode role string: %v", err)
 			}
-			log.Printf("String! %s", dec)
-		} else if v.Tag == asn1.TagOID {
-			var dec asn1.ObjectIdentifier
-			_, err := asn1.Unmarshal(v.FullBytes, &dec)
-			if err != nil {
-				log.Printf(":-( %v", err)
-			}
-			log.Printf("OID! %s", dec)
+			roles = append(roles, dec)
 		}
 	}
+
+	fmt.Printf("CA { Name: %s ID: %s } Roles: %v\n", root.QcStatement.RolesInfo.CAName, root.QcStatement.RolesInfo.CAID, roles)
+	return nil
 }
 
 func Extract(data []byte) ([]string, string, string, error) {
