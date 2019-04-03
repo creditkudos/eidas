@@ -60,6 +60,16 @@ func GenerateCSR(
 		return nil, fmt.Errorf("failed to generate key pair: %v", err)
 	}
 
+	ca, err := CompetentAuthorityForCountryCode(countryCode)
+	if err != nil {
+		return nil, fmt.Errorf("eidas: %v", err)
+	}
+
+	qc, err := Serialize(roles, *ca)
+	if err != nil {
+		return nil, fmt.Errorf("eidas: %v", err)
+	}
+
 	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
 		Version: 0,
 		Subject: pkix.Name{
@@ -73,6 +83,7 @@ func GenerateCSR(
 			keyUsageExtension(),
 			extendedKeyUsageExtension(),
 			subjectKeyIdentifier(key.PublicKey),
+			qcStatementsExtension(qc),
 		},
 	}, key)
 	if err != nil {
@@ -135,5 +146,13 @@ func subjectKeyIdentifier(key rsa.PublicKey) pkix.Extension {
 		Id: asn1.ObjectIdentifier{2, 5, 29, 14},
 		Critical: false,
 		Value: d,
+	}
+}
+
+func qcStatementsExtension(data []byte) pkix.Extension {
+	return pkix.Extension{
+		Id: asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3},
+		Critical: false,
+		Value: data,
 	}
 }
