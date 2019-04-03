@@ -66,9 +66,7 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 }
 
 func typeFromFlag(in string) (asn1.ObjectIdentifier, error) {
-	if in == "QSIGN" {
-		return eidas.QSIGNType, nil
-	} else if in == "QWAC" {
+	if in == "QWAC" {
 		return eidas.QWACType, nil
 	} else if in == "QSEAL" {
 		return eidas.QSEALType, nil

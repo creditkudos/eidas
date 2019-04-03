@@ -56,6 +56,20 @@ func GenerateCSR(
 	return csr, key, nil
 }
 
+func keyUsageForType(t asn1.ObjectIdentifier) ([]KeyUsage, error) {
+	if t[len(t)-1] == QWACType[len(QWACType)-1] {
+		return []KeyUsage{
+			DigitalSignature,
+		}, nil
+	} else if t[len(t)-1] == QSEALType[len(QWACType)-1] {
+		return []KeyUsage{
+			DigitalSignature,
+			NonRepudiation,
+		}, nil
+	}
+	return nil, fmt.Errorf("unknown QC type: %v", t)
+}
+
 type KeyUsage uint
 
 const (

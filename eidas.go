@@ -179,7 +179,6 @@ type qcType struct {
 }
 
 var (
-	QSIGNType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 1}
 	QSEALType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
 	QWACType  = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
 )
