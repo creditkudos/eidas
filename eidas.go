@@ -129,6 +129,7 @@ func DumpFromHex(h string) error {
 	return Dump(d)
 }
 
+// Extract returns the roles, CA name and CA ID from an encoded qualified statement.
 func Extract(data []byte) ([]string, string, string, error) {
 	var root root
 	_, err := asn1.Unmarshal(data, &root)
