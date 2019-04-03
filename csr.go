@@ -81,7 +81,10 @@ func GenerateCSR(
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
 			keyUsageExtension(),
-			extendedKeyUsageExtension(),
+			extendedKeyUsageExtension([]asn1.ObjectIdentifier{
+				TLSWWWServerAuthUsage,
+				TLSWWWClientAuthUsage,
+			}),
 			subjectKeyIdentifier(key.PublicKey),
 			qcStatementsExtension(qc),
 		},
@@ -121,12 +124,17 @@ func keyUsageExtension() pkix.Extension {
 	}
 }
 
-func extendedKeyUsageExtension() pkix.Extension {
-	x := []asn1.ObjectIdentifier{
-		asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1},
-		asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2},
-	}
-	d, _ := asn1.Marshal(x)
+var (
+	TLSWWWServerAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1}
+	TLSWWWClientAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2}
+	CodeSigningUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 3}
+	EmailProtectionUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 4}
+	TimeStampingUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 8}
+	OCSPSigning = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 9}
+)
+
+func extendedKeyUsageExtension(usages []asn1.ObjectIdentifier) pkix.Extension {
+	d, _ := asn1.Marshal(usages)
 
 	return pkix.Extension{
 		Id:       asn1.ObjectIdentifier{2, 5, 29, 37},
