@@ -1,4 +1,4 @@
-package main
+package eidas
 
 import (
 	"encoding/asn1"
@@ -45,7 +45,7 @@ type Roles struct{
 	Roles []asn1.RawValue
 }
 
-func serialize(roles []string, caName string, caID string) ([]byte, error) {
+func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles) * 2)
 	for i, rv := range roles {
 		d, err := asn1.Marshal(asn1.ObjectIdentifier(
@@ -95,7 +95,7 @@ func serialize(roles []string, caName string, caID string) ([]byte, error) {
 	return fin, nil
 }
 
-func dump(h string) {
+func DumpFromHex(h string) {
 	d, err := hex.DecodeString(h)
 	if err != nil {
 		log.Fatalf("Failed to decode hex: %v", err)
@@ -126,22 +126,4 @@ func dump(h string) {
 			log.Printf("OID! %s", dec)
 		}
 	}
-}
-
-func main() {
-	out, err := serialize([]string{"PSP_AS", "PSP_IC"}, "Financial Conduct Authority", "GB-FCA")
-	if err != nil {
-		log.Fatalf("Failed to serialize: %v", err)
-	}
-	h := hex.EncodeToString(out)
-	log.Printf("PSP_AS/PSP_IC: %s", h)
-	log.Printf("PSP_AS/PSP_IC: %s", pspASIC)
-	for i, _ := range pspASIC {
-		if h[i] != pspASIC[i] {
-			log.Printf("Expected %c@%d but found %c", pspASIC[i], i, h[i])
-		}
-	}
-
-	dump(h)
-	dump(pspASIC)
 }
