@@ -178,6 +178,15 @@ type qcType struct {
 	Detail []asn1.ObjectIdentifier
 }
 
+var (
+	// Also known as QSIGN
+	esign = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 1}
+	// Also known as QSEAL
+	eseal = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
+	// Also known as QWAC
+	web = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
+)
+
 type qcStatement struct {
 	OID       asn1.ObjectIdentifier
 	RolesInfo rolesInfo
