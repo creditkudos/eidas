@@ -29,6 +29,15 @@ func GenerateCSR(
 		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
 
+	keyUsage, err := keyUsageForType(qcType)
+	if err != nil {
+		return nil, nil, err
+	}
+	extendedKeyUsage, err := extendedKeyUsageForType(qcType)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
 		Version: 0,
 		Subject: pkix.Name{
@@ -39,13 +48,8 @@ func GenerateCSR(
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
-			KeyUsageExtension([]KeyUsage{
-				DigitalSignature,
-			}),
-			extendedKeyUsageExtension([]asn1.ObjectIdentifier{
-				TLSWWWServerAuthUsage,
-				TLSWWWClientAuthUsage,
-			}),
+			KeyUsageExtension(keyUsage),
+			extendedKeyUsageExtension(extendedKeyUsage),
 			subjectKeyIdentifier(key.PublicKey),
 			qcStatementsExtension(qc),
 		},
@@ -101,6 +105,18 @@ func KeyUsageExtension(usages []KeyUsage) pkix.Extension {
 		Critical: true,
 		Value:    d,
 	}
+}
+
+func extendedKeyUsageForType(t asn1.ObjectIdentifier) ([]asn1.ObjectIdentifier, error) {
+	if t[len(t)-1] == QWACType[len(QWACType)-1] {
+		return []asn1.ObjectIdentifier{
+			TLSWWWServerAuthUsage,
+			TLSWWWClientAuthUsage,
+		}, nil
+	} else if t[len(t)-1] == QSEALType[len(QWACType)-1] {
+		return []asn1.ObjectIdentifier{}, nil
+	}
+	return nil, fmt.Errorf("unknown QC type: %v", t)
 }
 
 var (
