@@ -80,7 +80,9 @@ func GenerateCSR(
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
-			keyUsageExtension(),
+			keyUsageExtension([]keyUsage{
+				digitalSignature,
+			}),
 			extendedKeyUsageExtension([]asn1.ObjectIdentifier{
 				TLSWWWServerAuthUsage,
 				TLSWWWClientAuthUsage,
@@ -95,26 +97,30 @@ func GenerateCSR(
 	return csr, nil
 }
 
+type keyUsage uint
+
 const (
-	digitalSignature = 0
-	nonRepudiation   = 1
-	keyEncipherment  = 2
-	dataEncipherment = 3
-	keyAgreement     = 4
-	keyCertSign      = 5
-	cRLSign          = 6
-	encipherOnly     = 7
-	decipherOnly     = 8
+	digitalSignature keyUsage = 0
+	nonRepudiation   keyUsage = 1
+	keyEncipherment  keyUsage = 2
+	dataEncipherment keyUsage = 3
+	keyAgreement     keyUsage = 4
+	keyCertSign      keyUsage = 5
+	cRLSign          keyUsage = 6
+	encipherOnly     keyUsage = 7
+	decipherOnly     keyUsage = 8
 )
 
-func keyUsageExtension() pkix.Extension {
+func keyUsageExtension(usages []keyUsage) pkix.Extension {
 	x := uint16(0)
-	x |= (uint16(1) << digitalSignature)
+	for _, usage := range usages {
+		x |= (uint16(1) << (7 - uint(usage)))
+	}
 	b := make([]byte, 2)
 	binary.LittleEndian.PutUint16(b, x)
 	bits := asn1.BitString{
 		Bytes:     b,
-		BitLength: decipherOnly + 1,
+		BitLength: int(decipherOnly) + 1,
 	}
 	d, _ := asn1.Marshal(bits)
 	return pkix.Extension{
@@ -127,10 +133,10 @@ func keyUsageExtension() pkix.Extension {
 var (
 	TLSWWWServerAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1}
 	TLSWWWClientAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2}
-	CodeSigningUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 3}
-	EmailProtectionUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 4}
-	TimeStampingUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 8}
-	OCSPSigning = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 9}
+	CodeSigningUsage      = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 3}
+	EmailProtectionUsage  = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 4}
+	TimeStampingUsage     = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 8}
+	OCSPSigning           = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 9}
 )
 
 func extendedKeyUsageExtension(usages []asn1.ObjectIdentifier) pkix.Extension {
