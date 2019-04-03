@@ -38,10 +38,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
 	}
-	pem.Encode(f, &pem.Block{
+	err = pem.Encode(f, &pem.Block{
 		Type: "CERTIFICATE REQUEST",
 		Bytes: d,
 	})
+	if err != nil {
+		log.Fatalf("failed to PEM encode CSR: %v", err)
+	}
 	if err := f.Close(); err != nil {
 		log.Fatalf("failed to write csr: %v", err)
 	}

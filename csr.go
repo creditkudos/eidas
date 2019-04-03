@@ -80,8 +80,8 @@ func GenerateCSR(
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
-			keyUsageExtension([]keyUsage{
-				digitalSignature,
+			KeyUsageExtension([]KeyUsage{
+				DigitalSignature,
 			}),
 			extendedKeyUsageExtension([]asn1.ObjectIdentifier{
 				TLSWWWServerAuthUsage,
@@ -97,21 +97,21 @@ func GenerateCSR(
 	return csr, nil
 }
 
-type keyUsage uint
+type KeyUsage uint
 
 const (
-	digitalSignature keyUsage = 0
-	nonRepudiation   keyUsage = 1
-	keyEncipherment  keyUsage = 2
-	dataEncipherment keyUsage = 3
-	keyAgreement     keyUsage = 4
-	keyCertSign      keyUsage = 5
-	cRLSign          keyUsage = 6
-	encipherOnly     keyUsage = 7
-	decipherOnly     keyUsage = 8
+	DigitalSignature KeyUsage = 0
+	NonRepudiation   KeyUsage = 1
+	KeyEncipherment  KeyUsage = 2
+	DataEncipherment KeyUsage = 3
+	KeyAgreement     KeyUsage = 4
+	KeyCertSign      KeyUsage = 5
+	CRLSign          KeyUsage = 6
+	EncipherOnly     KeyUsage = 7
+	DecipherOnly     KeyUsage = 8
 )
 
-func keyUsageExtension(usages []keyUsage) pkix.Extension {
+func KeyUsageExtension(usages []KeyUsage) pkix.Extension {
 	x := uint16(0)
 	for _, usage := range usages {
 		x |= (uint16(1) << (7 - uint(usage)))
@@ -120,7 +120,7 @@ func keyUsageExtension(usages []keyUsage) pkix.Extension {
 	binary.LittleEndian.PutUint16(b, x)
 	bits := asn1.BitString{
 		Bytes:     b,
-		BitLength: int(decipherOnly) + 1,
+		BitLength: int(DecipherOnly) + 1,
 	}
 	d, _ := asn1.Marshal(bits)
 	return pkix.Extension{
