@@ -17,6 +17,150 @@ const (
 	RolePaymentInstruments = "PSP_IC"
 )
 
+// CompetentAuthority under PSD2.
+type CompetentAuthority struct {
+	// Name of the authority, e.g. "Financial Conduct Authority".
+	Name string
+	// NCA identifier of the authority, e.g. "GB-FCA".
+	ID string
+}
+
+func CompetentAuthorityForCountryCode(code string) (*CompetentAuthority, error) {
+	if ca, ok := caMap[code]; ok {
+		return ca, nil
+	}
+	return nil, fmt.Errorf("unknown country code: %s", code)
+}
+
+// Maps ISO-3166-1 alpha-2 codes to a CompetentAuthority.
+// See ETSI TS 119 495 V1.2.1 (2018-11) Annex D.
+var caMap = map[string]*CompetentAuthority{
+	"AT": &CompetentAuthority{
+		ID:   "AT-FMA",
+		Name: "Austria Financial Market Authority",
+	},
+	"BE": &CompetentAuthority{
+		ID:   "BE-NBB",
+		Name: "National Bank of Belgium",
+	},
+	"BG": &CompetentAuthority{
+		ID:   "BG-BNB",
+		Name: "Bulgarian National Bank",
+	},
+	"HR": &CompetentAuthority{
+		ID:   "HR-CNB",
+		Name: "Croatian National Bank",
+	},
+	"CY": &CompetentAuthority{
+		ID:   "CY-CBC",
+		Name: "Central Bank of Cyprus",
+	},
+	"CZ": &CompetentAuthority{
+		ID:   "CZ-CNB",
+		Name: "Czech National Bank",
+	},
+	"DK": &CompetentAuthority{
+		ID:   "DK-DFSA",
+		Name: "Danish Financial Supervisory Authority",
+	},
+	"EE": &CompetentAuthority{
+		ID:   "EE-FI",
+		Name: "Estonia Financial Supervisory Authority",
+	},
+	"FI": &CompetentAuthority{
+		ID:   "FI-FINFSA",
+		Name: "Finnish Financial Supervisory Authority",
+	},
+	"FR": &CompetentAuthority{
+		ID:   "FR-ACPR",
+		Name: "Prudential Supervisory and Resolution Authority",
+	},
+	"DE": &CompetentAuthority{
+		ID:   "DE-BAFIN",
+		Name: "Federal Financial Supervisory Authority",
+	},
+	"GR": &CompetentAuthority{
+		ID:   "GR-BOG",
+		Name: "Bank of Greece",
+	},
+	"HU": &CompetentAuthority{
+		ID:   "HU-CBH",
+		Name: "Central Bank of Hungary",
+	},
+	"IS": &CompetentAuthority{
+		ID:   "IS-FME",
+		Name: "Financial Supervisory Authority",
+	},
+	"IE": &CompetentAuthority{
+		ID:   "IE-CBI",
+		Name: "Central Bank of Ireland",
+	},
+	"IT": &CompetentAuthority{
+		ID:   "IT-BI",
+		Name: "Bank of Italy",
+	},
+	"LI": &CompetentAuthority{
+		ID:   "LI-FMA",
+		Name: "Financial Market Authority Liechtenstein",
+	},
+	"LV": &CompetentAuthority{
+		ID:   "LV-FCMC",
+		Name: "Financial and Capital Markets Commission",
+	},
+	"LT": &CompetentAuthority{
+		ID:   "LT-BL",
+		Name: "Bank of Lithuania",
+	},
+	"LU": &CompetentAuthority{
+		ID:   "LU-CSSF",
+		Name: "Commission for the Supervision of Financial Sector",
+	},
+	"NO": &CompetentAuthority{
+		ID:   "NO-FSA",
+		Name: "The Financial Supervisory Authority of Norway",
+	},
+	"MT": &CompetentAuthority{
+		ID:   "MT-MFSA",
+		Name: "Malta Financial Services Authority",
+	},
+	"NL": &CompetentAuthority{
+		ID:   "NL-DNB",
+		Name: "The Netherlands Bank",
+	},
+	"PL": &CompetentAuthority{
+		ID:   "PL-PFSA",
+		Name: "Polish Financial Supervision Authority",
+	},
+	"PT": &CompetentAuthority{
+		ID:   "PT-BP",
+		Name: "Bank of Portugal",
+	},
+	"RO": &CompetentAuthority{
+		ID:   "RO-NBR",
+		Name: "National bank of Romania",
+	},
+	"SK": &CompetentAuthority{
+		ID:   "SK-NBS",
+		Name: "National Bank of Slovakia",
+	},
+	"SI": &CompetentAuthority{
+		ID:   "SI-BS",
+		Name: "Bank of Slovenia",
+	},
+	"ES": &CompetentAuthority{
+		ID:   "ES-BE",
+		Name: "Bank of Spain",
+	},
+	"SE": &CompetentAuthority{
+		ID:   "SE-FINA",
+		Name: "Swedish Financial Supervision Authority",
+	},
+	"GB": &CompetentAuthority{
+		ID:   "GB-FCA",
+		Name: "Financial Conduct Authority",
+	},
+}
+
 var roleMap = map[string]int{
 	RoleAccountServicing:   1,
 	RolePaymentInitiation:  2,
@@ -53,7 +197,7 @@ type rawRoles struct {
 }
 
 // Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement.
-func Serialize(roles []string, caName string, caID string) ([]byte, error) {
+func Serialize(roles []string, ca CompetentAuthority) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles)*2)
 	for i, rv := range roles {
 		if _, ok := roleMap[rv]; !ok {
@@ -95,8 +239,8 @@ func Serialize(roles []string, caName string, caID string) ([]byte, error) {
 				Roles: rawRoles{
 					Roles: r,
 				},
-				CAName: caName,
-				CAID:   caID,
+				CAName: ca.Name,
+				CAID:   ca.ID,
 			},
 		},
 	})

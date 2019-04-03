@@ -5,12 +5,14 @@ import (
 	"testing"
 )
 
-const defaultCAName = "Financial Conduct Authority"
-const defaultCAID = "GB-FCA"
+var defaultCA = CompetentAuthority{
+	Name: "Financial Conduct Authority",
+	ID:   "GB-FCA",
+}
 
 func TestSimple(t *testing.T) {
 	pspAS := "305b3013060604008e4601063009060704008e4601060330440606040081982702303a301330110607040081982701010c065053505f41530c1b46696e616e6369616c20436f6e6475637420417574686f726974790c0647422d464341"
-	d, err := Serialize([]string{"PSP_AS"}, defaultCAName, defaultCAID)
+	d, err := Serialize([]string{"PSP_AS"}, defaultCA)
 	if err != nil {
 		t.Error(err)
 	}
@@ -72,7 +74,7 @@ func TestAll(t *testing.T) {
 	for _, e := range expected {
 		_ = DumpFromHex(e.Expected)
 		// Check our serialization matches theirs.
-		s, err := Serialize(e.Roles, defaultCAName, defaultCAID)
+		s, err := Serialize(e.Roles, defaultCA)
 		if err != nil {
 			t.Error(err)
 		}
@@ -94,11 +96,11 @@ func TestAll(t *testing.T) {
 				t.Errorf("Expected role: %s but got %s", e.Roles[i], r)
 			}
 		}
-		if name != defaultCAName {
-			t.Errorf("Expected CA name: %s but got %s", defaultCAName, name)
+		if name != defaultCA.Name {
+			t.Errorf("Expected CA name: %s but got %s", defaultCA.Name, name)
 		}
-		if id != defaultCAID {
-			t.Errorf("Expected CA id: %s but got %s", defaultCAID, id)
+		if id != defaultCA.ID {
+			t.Errorf("Expected CA id: %s but got %s", defaultCA.ID, id)
 		}
 	}
 }
