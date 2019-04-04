@@ -25,7 +25,7 @@ var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
 var outKey = flag.String("key", "out.key", "Output file for private key")
 
 func writeCSR(path string, data []byte) (err error) {
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 		return err
 	}
 
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0600)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
