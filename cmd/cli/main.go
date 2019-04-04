@@ -31,7 +31,7 @@ func writeCSR(path string, data []byte) (err error) {
 	}
 	defer func() {
 		if err2 := f.Close(); err2 != nil {
-			if err != nil {
+			if err == nil {
 				err = err2
 			}
 		}
@@ -54,7 +54,7 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 	}
 	defer func() {
 		if err2 := f.Close(); err2 != nil {
-			if err != nil {
+			if err == nil {
 				err = err2
 			}
 		}
