@@ -34,12 +34,18 @@ For both QWAC and QSEAL types the following attributes are required in the CSR:
 
 #### [Key Usage](https://tools.ietf.org/html/rfc5280#section-4.2.1.3)
 * X509v3 Key Usage extension should be marked as `critical`.
-* For QWAC, it should include "Digital Signature".
-* For QSEAL, it should include "Digital Signature" and "Non Repudiation" (also know as "Content Commitment").
+
+| QWAC | QSEAL |
+| --- | --- |
+| Digital Signature | Digital Signature |
+| Non Repudiation | |
 
 #### [Extended Key Usage](https://tools.ietf.org/html/rfc5280#section-4.2.1.12)
-* For QWAC, it should include "TLS Web Server Authentication" and "TLS Web Client Authentication".
-* For QSEAL, it should be empty.
+
+| QWAC | QSEAL |
+| --- | --- |
+| TLS Web Server Authentication | |
+| TLS Web Client Authentication | |
 
 #### [Subject Key Identifier](https://tools.ietf.org/html/rfc5280#section-4.2.1.2)
 * Should be the 160-bit SHA1 sum of the PKCS1 public key.
