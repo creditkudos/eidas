@@ -59,9 +59,9 @@ func TestBuildCSR(t *testing.T) {
 		}
 
 		exts := csr.Extensions
-		So(exts, shouldContainId, asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3})
+		So(exts, shouldContainId, QCStatementsExt)
 		for _, ext := range exts {
-			if ext.Id.Equal(asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3}) {
+			if ext.Id.Equal(QCStatementsExt) {
 				roles, caName, caID, err := Extract(ext.Value)
 				So(err, ShouldBeNil)
 				So(roles, ShouldResemble, []string{"PSP_AI"})
