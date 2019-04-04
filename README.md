@@ -1,7 +1,7 @@
 # eIDAS
 Tools for reading and creating eIDAS certificate signing requests
 
-## Generating a Ceritificate Signing Request (CSR)
+## Generating a Certificate Signing Request (CSR)
 ```bash
 go run cmd/cli/main.go
 ```
