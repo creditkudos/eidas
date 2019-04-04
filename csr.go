@@ -144,9 +144,11 @@ func subjectKeyIdentifier(key rsa.PublicKey) pkix.Extension {
 	}
 }
 
+var QCStatementsExt = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3}
+
 func qcStatementsExtension(data []byte) pkix.Extension {
 	return pkix.Extension{
-		Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3},
+		Id:       QCStatementsExt,
 		Critical: false,
 		Value:    data,
 	}
