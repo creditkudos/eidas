@@ -40,8 +40,8 @@ organizationName = "Credit Kudos Limited" # Organizational name
 # system). Other examples can include use of non-alphanumeric characters such as "PSDBE-NBB-
 # 1234.567.890" and "PSDFI-FINFSA-1234567-8" and "PSDMT-MFSA-A 12345" (note space character after "A")
 #
-organizationIdentifier = "PSDGB-FCA-795791" # Must be in format as shown above
 commonName = "001580000103UAbAAM" # Subject common name
+organizationIdentifier = "PSDGB-FCA-795791" # Must be in format as shown above
 #
 # Required specific extensions in certificate
 #

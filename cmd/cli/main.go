@@ -12,13 +12,14 @@ import (
 	"strings"
 
 	"github.com/creditkudos/eidas"
+	"github.com/creditkudos/eidas/qcstatements"
 )
 
 var countryCode = flag.String("country-code", "GB", "ISO-3166-1 Alpha 2 country code")
 var orgName = flag.String("organization-name", "Credit Kudos Limited", "Organization name")
 var orgID = flag.String("organization-id", "PSDGB-FCA-795791", "Organization ID")
 var commonName = flag.String("common-name", "001580000103UAbAAM", "Common Name")
-var roles = flag.String("roles", eidas.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
+var roles = flag.String("roles", qcstatements.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
 var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC, QSIGN or QSEAL")
 
 var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
@@ -67,9 +68,9 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 
 func typeFromFlag(in string) (asn1.ObjectIdentifier, error) {
 	if in == "QWAC" {
-		return eidas.QWACType, nil
+		return qcstatements.QWACType, nil
 	} else if in == "QSEAL" {
-		return eidas.QSEALType, nil
+		return qcstatements.QSEALType, nil
 	}
 	return nil, fmt.Errorf("Unknown QC type: %s", in)
 }

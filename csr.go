@@ -10,6 +10,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+
+	"github.com/creditkudos/eidas/qcstatements"
 )
 
 func GenerateCSR(
@@ -19,12 +21,12 @@ func GenerateCSR(
 		return nil, nil, fmt.Errorf("failed to generate key pair: %v", err)
 	}
 
-	ca, err := CompetentAuthorityForCountryCode(countryCode)
+	ca, err := qcstatements.CompetentAuthorityForCountryCode(countryCode)
 	if err != nil {
 		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
 
-	qc, err := Serialize(roles, *ca, qcType)
+	qc, err := qcstatements.Serialize(roles, *ca, qcType)
 	if err != nil {
 		return nil, nil, fmt.Errorf("eidas: %v", err)
 	}
@@ -67,11 +69,11 @@ func GenerateCSR(
 }
 
 func keyUsageForType(t asn1.ObjectIdentifier) ([]x509.KeyUsage, error) {
-	if t[len(t)-1] == QWACType[len(QWACType)-1] {
+	if t.Equal(qcstatements.QWACType) {
 		return []x509.KeyUsage{
 			x509.KeyUsageDigitalSignature,
 		}, nil
-	} else if t[len(t)-1] == QSEALType[len(QWACType)-1] {
+	} else if t.Equal(qcstatements.QSEALType) {
 		return []x509.KeyUsage{
 			x509.KeyUsageDigitalSignature,
 			x509.KeyUsageContentCommitment, // Also known as NonRepudiation.
@@ -100,12 +102,12 @@ func KeyUsageExtension(usages []x509.KeyUsage) pkix.Extension {
 }
 
 func extendedKeyUsageForType(t asn1.ObjectIdentifier) ([]asn1.ObjectIdentifier, error) {
-	if t[len(t)-1] == QWACType[len(QWACType)-1] {
+	if t.Equal(qcstatements.QWACType) {
 		return []asn1.ObjectIdentifier{
 			TLSWWWServerAuthUsage,
 			TLSWWWClientAuthUsage,
 		}, nil
-	} else if t[len(t)-1] == QSEALType[len(QWACType)-1] {
+	} else if t.Equal(qcstatements.QSEALType) {
 		return []asn1.ObjectIdentifier{}, nil
 	}
 	return nil, fmt.Errorf("unknown QC type: %v", t)
