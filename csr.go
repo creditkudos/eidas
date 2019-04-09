@@ -150,24 +150,29 @@ func qcStatementsExtension(data []byte) pkix.Extension {
 	}
 }
 
+var oidCountryCode = asn1.ObjectIdentifier{2, 5, 4, 6}
+var oidOrganizationName = asn1.ObjectIdentifier{2, 5, 4, 10}
+var oidOrganizationID = asn1.ObjectIdentifier{2, 5, 4, 97}
+var oidCommonName = asn1.ObjectIdentifier{2, 5, 4, 3}
+
 // Explicitly build subject from attributes to keep ordering.
 func buildSubject(countryCode string, orgName string, commonName string, orgID string) ([]byte, error) {
 	s := pkix.Name{
 		ExtraNames: []pkix.AttributeTypeAndValue{
 			pkix.AttributeTypeAndValue{
-				Type:  asn1.ObjectIdentifier{2, 5, 4, 6},
+				Type:  oidCountryCode,
 				Value: countryCode,
 			},
 			pkix.AttributeTypeAndValue{
-				Type:  asn1.ObjectIdentifier{2, 5, 4, 10},
+				Type:  oidOrganizationName,
 				Value: orgName,
 			},
 			pkix.AttributeTypeAndValue{
-				Type:  asn1.ObjectIdentifier{2, 5, 4, 97},
+				Type:  oidOrganizationID,
 				Value: orgID,
 			},
 			pkix.AttributeTypeAndValue{
-				Type:  asn1.ObjectIdentifier{2, 5, 4, 3},
+				Type:  oidCommonName,
 				Value: commonName,
 			},
 		},

@@ -52,12 +52,19 @@ func TestBuildCSR(t *testing.T) {
 		So(csr.Subject.CommonName, ShouldEqual, "Foo Name")
 
 		names := csr.Subject.Names
-		So(names, shouldContainType, asn1.ObjectIdentifier{2, 5, 4, 97})
-		for _, name := range names {
-			if name.Type.Equal(asn1.ObjectIdentifier{2, 5, 4, 97}) {
-				So(name.Value, ShouldEqual, "Foo Org ID")
-			}
-		}
+		So(names, ShouldHaveLength, 4)
+
+		So(names[0].Type, ShouldEqual, oidCountryCode)
+		So(names[0].Value, ShouldEqual, "GB")
+
+		So(names[1].Type, ShouldEqual, oidOrganizationName)
+		So(names[1].Value, ShouldEqual, "Foo Org")
+
+		So(names[2].Type, ShouldEqual, oidOrganizationID)
+		So(names[2].Value, ShouldEqual, "Foo Org ID")
+
+		So(names[3].Type, ShouldEqual, oidCommonName)
+		So(names[3].Value, ShouldEqual, "Foo Name")
 
 		exts := csr.Extensions
 		So(exts, shouldContainId, QCStatementsExt)
@@ -71,23 +78,6 @@ func TestBuildCSR(t *testing.T) {
 			}
 		}
 	})
-}
-
-func shouldContainType(actual interface{}, expected ...interface{}) string {
-	attrs, ok := actual.([]pkix.AttributeTypeAndValue)
-	if !ok {
-		return "Expected []pkix.AttributeTypeAndValue"
-	}
-	for _, v := range attrs {
-		ex, ok := expected[0].(asn1.ObjectIdentifier)
-		if !ok {
-			return "Expected asn1.ObjectIdentifier"
-		}
-		if v.Type.Equal(ex) {
-			return ""
-		}
-	}
-	return fmt.Sprintf("Expected to find: %v", expected)
 }
 
 func shouldContainId(actual interface{}, expected ...interface{}) string {
