@@ -52,6 +52,8 @@ For both QWAC and QSEAL types the following attributes are required in the CSR:
 | TLS Web Server Authentication | |
 | TLS Web Client Authentication | |
 
+Note: For QSEAL, a CSR is expected to not have an extended key usage section at all, rather than an empty one.
+
 #### [Subject Key Identifier](https://tools.ietf.org/html/rfc5280#section-4.2.1.2)
 * Should be the 160-bit SHA1 sum of the PKCS1 public key.
 
