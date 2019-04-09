@@ -38,7 +38,7 @@ func writeCSR(path string, data []byte) (err error) {
 		}
 	}()
 	return pem.Encode(f, &pem.Block{
-		Type: "CERTIFICATE REQUEST",
+		Type:  "CERTIFICATE REQUEST",
 		Bytes: data,
 	})
 }
@@ -61,7 +61,7 @@ func writeKey(path string, key *rsa.PrivateKey) (err error) {
 		}
 	}()
 	return pem.Encode(f, &pem.Block{
-		Type: "PRIVATE KEY",
+		Type:  "PRIVATE KEY",
 		Bytes: pkcs8,
 	})
 }
