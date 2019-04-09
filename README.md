@@ -25,6 +25,11 @@ For both QWAC and QSEAL types the following attributes are required in the CSR:
 ### [Subject](https://tools.ietf.org/html/rfc5280#section-4.1.2.6)
 * Must contain country code, organisation name and common name.
 * Must also contain the organisation ID. Organisation ID (ITU-T X.520 10/2012 Section 6.4.4) isn't supported by most tools by default (including OpenSSL and go) but this can be added to the subject as a custom name with the ASN.1 OID of `2.5.4.97`. Should be something like `PSDGB-FCA-123456`.
+* It's not specified in the standards (AFAICT) but these should be in a defined order:
+  1. Country Code (C=)
+  1. Organization Name (O=)
+  1. Organization ID (2.5.4.97=)
+  1. Common Name (CN=)
 
 ### Key Parameters
 * Key should be 2048-bit RSA.
