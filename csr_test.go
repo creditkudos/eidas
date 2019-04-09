@@ -68,6 +68,10 @@ func TestBuildCSR(t *testing.T) {
 
 		exts := csr.Extensions
 		So(exts, shouldContainId, QCStatementsExt)
+		// Should have key usage
+		So(exts, shouldContainId, asn1.ObjectIdentifier{2, 5, 29, 15})
+		// Should have extended key usage.
+		So(exts, shouldContainId, asn1.ObjectIdentifier{2, 5, 29, 37})
 		for _, ext := range exts {
 			if ext.Id.Equal(QCStatementsExt) {
 				roles, caName, caID, err := qcstatements.Extract(ext.Value)

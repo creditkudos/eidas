@@ -40,6 +40,14 @@ func GenerateCSR(
 		return nil, nil, err
 	}
 
+	extensions := []pkix.Extension{
+		KeyUsageExtension(keyUsage),
+	}
+	if len(extendedKeyUsage) != 0 {
+		extensions = append(extensions, extendedKeyUsageExtension(extendedKeyUsage))
+	}
+	extensions = append(extensions, subjectKeyIdentifier(key.PublicKey), qcStatementsExtension(qc))
+
 	subject, err := buildSubject(countryCode, orgName, commonName, orgID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build CSR subject: %v", err)
@@ -49,12 +57,7 @@ func GenerateCSR(
 		RawSubject:         subject,
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
-		ExtraExtensions: []pkix.Extension{
-			KeyUsageExtension(keyUsage),
-			extendedKeyUsageExtension(extendedKeyUsage),
-			subjectKeyIdentifier(key.PublicKey),
-			qcStatementsExtension(qc),
-		},
+		ExtraExtensions:    extensions,
 	}, key)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate csr: %v", err)
