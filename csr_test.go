@@ -54,16 +54,16 @@ func TestBuildCSR(t *testing.T) {
 		names := csr.Subject.Names
 		So(names, ShouldHaveLength, 4)
 
-		So(names[0].Type, ShouldEqual, asn1.ObjectIdentifier{2, 5, 4, 6})
+		So(names[0].Type, ShouldEqual, oidCountryCode)
 		So(names[0].Value, ShouldEqual, "GB")
 
-		So(names[1].Type, ShouldEqual, asn1.ObjectIdentifier{2, 5, 4, 10})
+		So(names[1].Type, ShouldEqual, oidOrganizationName)
 		So(names[1].Value, ShouldEqual, "Foo Org")
 
-		So(names[2].Type, ShouldEqual, asn1.ObjectIdentifier{2, 5, 4, 97})
+		So(names[2].Type, ShouldEqual, oidOrganizationID)
 		So(names[2].Value, ShouldEqual, "Foo Org ID")
 
-		So(names[3].Type, ShouldEqual, asn1.ObjectIdentifier{2, 5, 4, 3})
+		So(names[3].Type, ShouldEqual, oidCommonName)
 		So(names[3].Value, ShouldEqual, "Foo Name")
 
 		exts := csr.Extensions
