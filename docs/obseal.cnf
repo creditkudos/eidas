@@ -22,8 +22,7 @@ req_extensions = client_reqext # Desired extensions. Mandatory to include PSD2 Q
 #
 # Subject Distinguished Name format in certificate
 # -----------------------------------------------
-# EG: CN = 0015800001041ReAAI, 2.5.4.97 = PSDGB-OB-Unknown0015800001041ReAAI, O = Open Banking Limited (D), C
-= GB
+# EG: CN = 0015800001041ReAAI, 2.5.4.97 = PSDGB-OB-Unknown0015800001041ReAAI, O = Open Banking Limited (D), C = GB
 #
 #
 [ client_dn ]
