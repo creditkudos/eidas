@@ -7,19 +7,20 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/creditkudos/eidas/qcstatements"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestKeyUsage(t *testing.T) {
 	Convey("key usage for QWAC", t, func() {
-		usage, err := keyUsageForType(QWACType)
+		usage, err := keyUsageForType(qcstatements.QWACType)
 		So(err, ShouldBeNil)
 		So(usage, ShouldResemble, []x509.KeyUsage{
 			x509.KeyUsageDigitalSignature,
 		})
 	})
 	Convey("key usage for QSEAL", t, func() {
-		usage, err := keyUsageForType(QSEALType)
+		usage, err := keyUsageForType(qcstatements.QSEALType)
 		So(err, ShouldBeNil)
 		So(usage, ShouldResemble, []x509.KeyUsage{
 			x509.KeyUsageDigitalSignature,
@@ -30,7 +31,7 @@ func TestKeyUsage(t *testing.T) {
 
 func TestExtendedKeyUsage(t *testing.T) {
 	Convey("extended key usage for QWAC", t, func() {
-		usage, err := extendedKeyUsageForType(QWACType)
+		usage, err := extendedKeyUsageForType(qcstatements.QWACType)
 		So(err, ShouldBeNil)
 		So(usage, ShouldResemble, []asn1.ObjectIdentifier{
 			TLSWWWServerAuthUsage,
@@ -41,7 +42,7 @@ func TestExtendedKeyUsage(t *testing.T) {
 
 func TestBuildCSR(t *testing.T) {
 	Convey("CSR for QWAC", t, func() {
-		data, key, err := GenerateCSR("GB", "Foo Org", "Foo Org ID", "Foo Name", []string{"PSP_AI"}, QWACType)
+		data, key, err := GenerateCSR("GB", "Foo Org", "Foo Org ID", "Foo Name", []string{"PSP_AI"}, qcstatements.QWACType)
 		So(err, ShouldBeNil)
 		So(key, ShouldNotBeNil)
 		csr, err := x509.ParseCertificateRequest(data)
@@ -62,7 +63,7 @@ func TestBuildCSR(t *testing.T) {
 		So(exts, shouldContainId, QCStatementsExt)
 		for _, ext := range exts {
 			if ext.Id.Equal(QCStatementsExt) {
-				roles, caName, caID, err := Extract(ext.Value)
+				roles, caName, caID, err := qcstatements.Extract(ext.Value)
 				So(err, ShouldBeNil)
 				So(roles, ShouldResemble, []string{"PSP_AI"})
 				So(caName, ShouldEqual, "Financial Conduct Authority")

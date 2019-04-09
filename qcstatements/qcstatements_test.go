@@ -1,4 +1,4 @@
-package eidas
+package qcstatements
 
 import (
 	"encoding/hex"
