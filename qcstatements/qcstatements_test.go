@@ -106,12 +106,50 @@ func TestAll(t *testing.T) {
 }
 
 func TestQSEAL(t *testing.T) {
-	pspAS := "305b3013060604008e4601063009060704008e4601060230440606040081982702303a301330110607040081982701010c065053505f41530c1b46696e616e6369616c20436f6e6475637420417574686f726974790c0647422d464341"
-	d, err := Serialize([]string{"PSP_AS"}, defaultCA, QSEALType)
-	if err != nil {
-		t.Error(err)
+	type testData struct {
+		Expected string
+		Roles    []string
 	}
-	if hex.EncodeToString(d) != pspAS {
-		t.Error("Mismatch with PSP_AS")
+	expected := []testData{
+		testData{
+			Expected: "305b3013060604008e4601063009060704008e4601060230440606040081982702303a301330110607040081982701010c065053505f41530c1b46696e616e6369616c20436f6e6475637420417574686f726974790c0647422d464341",
+			Roles:    []string{"PSP_AS"},
+		},
+		testData{
+			Expected: "305b3013060604008e4601063009060704008e4601060230440606040081982702303a301330110607040081982701030c065053505f41490c1b46696e616e6369616c20436f6e6475637420417574686f726974790c0647422d464341",
+			Roles:    []string{"PSP_AI"},
+		},
+	}
+	for _, e := range expected {
+		_ = DumpFromHex(e.Expected)
+		// Check our serialization matches theirs.
+		s, err := Serialize(e.Roles, defaultCA, QSEALType)
+		if err != nil {
+			t.Error(err)
+		}
+		if hex.EncodeToString(s) != e.Expected {
+			t.Errorf("Mismatch with roles: %v", e.Roles)
+		}
+
+		// Check we can extract the roles, name and ID correctly.
+		d, err := hex.DecodeString(e.Expected)
+		if err != nil {
+			t.Error(err)
+		}
+		roles, name, id, err := Extract(d)
+		if err != nil {
+			t.Error(err)
+		}
+		for i, r := range roles {
+			if e.Roles[i] != r {
+				t.Errorf("Expected role: %s but got %s", e.Roles[i], r)
+			}
+		}
+		if name != defaultCA.Name {
+			t.Errorf("Expected CA name: %s but got %s", defaultCA.Name, name)
+		}
+		if id != defaultCA.ID {
+			t.Errorf("Expected CA id: %s but got %s", defaultCA.ID, id)
+		}
 	}
 }
