@@ -40,19 +40,13 @@ func GenerateCSR(
 		return nil, nil, err
 	}
 
+	subject, err := buildSubject(countryCode, orgName, commonName, orgID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to build CSR subject: %v", err)
+	}
 	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
-		Version: 0,
-		Subject: pkix.Name{
-			CommonName:   commonName,
-			Country:      []string{countryCode},
-			Organization: []string{orgName},
-			ExtraNames: []pkix.AttributeTypeAndValue{
-				pkix.AttributeTypeAndValue{
-					Type:  asn1.ObjectIdentifier{2, 5, 4, 97},
-					Value: orgID,
-				},
-			},
-		},
+		Version:            0,
+		RawSubject:         subject,
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions: []pkix.Extension{
@@ -154,4 +148,29 @@ func qcStatementsExtension(data []byte) pkix.Extension {
 		Critical: false,
 		Value:    data,
 	}
+}
+
+// Explicitly build subject from attributes to keep ordering.
+func buildSubject(countryCode string, orgName string, commonName string, orgID string) ([]byte, error) {
+	s := pkix.Name{
+		ExtraNames: []pkix.AttributeTypeAndValue{
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{2, 5, 4, 6},
+				Value: countryCode,
+			},
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{2, 5, 4, 10},
+				Value: orgName,
+			},
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{2, 5, 4, 97},
+				Value: orgID,
+			},
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{2, 5, 4, 3},
+				Value: commonName,
+			},
+		},
+	}
+	return asn1.Marshal(s.ToRDNSequence())
 }
