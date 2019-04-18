@@ -6,15 +6,17 @@ import (
 	"fmt"
 )
 
+type Role string
+
 const (
 	// Account servicing role.
-	RoleAccountServicing = "PSP_AS"
+	RoleAccountServicing Role = "PSP_AS"
 	// Payment initiation role.
-	RolePaymentInitiation = "PSP_PI"
+	RolePaymentInitiation Role = "PSP_PI"
 	// Account information role.
-	RoleAccountInformation = "PSP_AI"
+	RoleAccountInformation Role = "PSP_AI"
 	// Issuing of card-based payment instruments role.
-	RolePaymentInstruments = "PSP_IC"
+	RolePaymentInstruments Role = "PSP_IC"
 )
 
 // CompetentAuthority under PSD2.
@@ -161,7 +163,7 @@ var caMap = map[string]*CompetentAuthority{
 	},
 }
 
-var roleMap = map[string]int{
+var roleMap = map[Role]int{
 	RoleAccountServicing:   1,
 	RolePaymentInitiation:  2,
 	RoleAccountInformation: 3,
@@ -202,7 +204,7 @@ type rawRoles struct {
 }
 
 // Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement. qcType should be one of ESignType, ESEALType or WEBType.
-func Serialize(roles []string, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]byte, error) {
+func Serialize(roles []Role, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles)*2)
 	for i, rv := range roles {
 		if _, ok := roleMap[rv]; !ok {
@@ -275,17 +277,17 @@ func DumpFromHex(h string) error {
 }
 
 // Extract returns the roles, CA name and CA ID from an encoded qualified statement.
-func Extract(data []byte) ([]string, string, string, error) {
+func Extract(data []byte) ([]Role, string, string, error) {
 	var root root
 	_, err := asn1.Unmarshal(data, &root)
 	if err != nil {
 		return nil, "", "", fmt.Errorf("failed to decode eIDAS: %v", err)
 	}
 
-	roles := make([]string, 0)
+	roles := make([]Role, 0)
 	for _, v := range root.QcStatement.RolesInfo.Roles.Roles {
 		if v.Tag == asn1.TagUTF8String {
-			var dec string
+			var dec Role
 			_, err := asn1.Unmarshal(v.FullBytes, &dec)
 			if err != nil {
 				return nil, "", "", fmt.Errorf("failed to decode eIDAS role: %v", err)

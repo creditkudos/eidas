@@ -42,7 +42,7 @@ func TestExtendedKeyUsage(t *testing.T) {
 
 func TestBuildCSR(t *testing.T) {
 	Convey("CSR for QWAC", t, func() {
-		data, key, err := GenerateCSR("GB", "Foo Org", "Foo Org ID", "Foo Name", []string{"PSP_AI"}, qcstatements.QWACType)
+		data, key, err := GenerateCSR("GB", "Foo Org", "Foo Org ID", "Foo Name", []qcstatements.Role{qcstatements.RoleAccountInformation}, qcstatements.QWACType)
 		So(err, ShouldBeNil)
 		So(key, ShouldNotBeNil)
 		csr, err := x509.ParseCertificateRequest(data)
@@ -76,7 +76,7 @@ func TestBuildCSR(t *testing.T) {
 			if ext.Id.Equal(QCStatementsExt) {
 				roles, caName, caID, err := qcstatements.Extract(ext.Value)
 				So(err, ShouldBeNil)
-				So(roles, ShouldResemble, []string{"PSP_AI"})
+				So(roles, ShouldResemble, []qcstatements.Role{qcstatements.RoleAccountInformation})
 				So(caName, ShouldEqual, "Financial Conduct Authority")
 				So(caID, ShouldEqual, "GB-FCA")
 			}
