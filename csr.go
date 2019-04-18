@@ -41,7 +41,7 @@ func GenerateCSR(
 	}
 
 	extensions := []pkix.Extension{
-		KeyUsageExtension(keyUsage),
+		keyUsageExtension(keyUsage),
 	}
 	if len(extendedKeyUsage) != 0 {
 		extensions = append(extensions, extendedKeyUsageExtension(extendedKeyUsage))
@@ -79,7 +79,7 @@ func keyUsageForType(t asn1.ObjectIdentifier) ([]x509.KeyUsage, error) {
 	return nil, fmt.Errorf("unknown QC type: %v", t)
 }
 
-func KeyUsageExtension(usages []x509.KeyUsage) pkix.Extension {
+func keyUsageExtension(usages []x509.KeyUsage) pkix.Extension {
 	x := uint16(0)
 	for _, usage := range usages {
 		x |= (uint16(1) << (8 - uint(usage)))
