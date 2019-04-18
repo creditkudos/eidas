@@ -1,8 +1,19 @@
 version: 2.1
 orbs:
   ck: creditkudos/main@volatile
+jobs:
+  docker_build:
+    docker:
+      - image: docker:dind
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build docker image
+          command: docker build -t eidas .
 workflows:
   all:
     jobs:
       - ck/go_test
       - ck/go_lint
+      - docker_build
