@@ -19,7 +19,7 @@ var countryCode = flag.String("country-code", "", "ISO-3166-1 Alpha 2 country co
 var orgName = flag.String("organization-name", "", "Organization name")
 var orgID = flag.String("organization-id", "", "Organization ID")
 var commonName = flag.String("common-name", "", "Common Name")
-var roles = flag.String("roles", qcstatements.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
+var roles = flag.String("roles", string(qcstatements.RoleAccountInformation), "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
 var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC or QSEAL")
 
 var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
@@ -99,8 +99,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	var r []qcstatements.Role
+	for _, role := range strings.Split(*roles, ",") {
+		r = append(r, qcstatements.Role(role))
+	}
+
 	d, key, err := eidas.GenerateCSR(
-		*countryCode, *orgName, *orgID, *commonName, strings.Split(*roles, ","), t)
+		*countryCode, *orgName, *orgID, *commonName, r, t)
 	if err != nil {
 		log.Fatalf(":-( %v", err)
 	}
