@@ -20,7 +20,7 @@ var orgName = flag.String("organization-name", "", "Organization name")
 var orgID = flag.String("organization-id", "", "Organization ID")
 var commonName = flag.String("common-name", "", "Common Name")
 var roles = flag.String("roles", qcstatements.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
-var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC, QSIGN or QSEAL")
+var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC or QSEAL")
 
 var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
 var outKey = flag.String("key", "out.key", "Output file for private key")
