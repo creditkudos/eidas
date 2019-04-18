@@ -15,10 +15,10 @@ import (
 	"github.com/creditkudos/eidas/qcstatements"
 )
 
-var countryCode = flag.String("country-code", "GB", "ISO-3166-1 Alpha 2 country code")
-var orgName = flag.String("organization-name", "Credit Kudos Limited", "Organization name")
-var orgID = flag.String("organization-id", "PSDGB-FCA-795791", "Organization ID")
-var commonName = flag.String("common-name", "001580000103UAbAAM", "Common Name")
+var countryCode = flag.String("country-code", "", "ISO-3166-1 Alpha 2 country code")
+var orgName = flag.String("organization-name", "", "Organization name")
+var orgID = flag.String("organization-id", "", "Organization ID")
+var commonName = flag.String("common-name", "", "Common Name")
 var roles = flag.String("roles", qcstatements.RoleAccountInformation, "eIDAS roles; comma-separated list from [PSP_AS, PSP_PI, PSP_AI, PSP_IC]")
 var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC, QSIGN or QSEAL")
 
@@ -77,6 +77,22 @@ func typeFromFlag(in string) (asn1.ObjectIdentifier, error) {
 
 func main() {
 	flag.Parse()
+
+	if *countryCode == "" {
+		log.Fatal("-country-code is required (e.g., 'GB')")
+	}
+
+	if *orgName == "" {
+		log.Fatal("-organization-name is required, e.g., 'Credit Kudos Limited'")
+	}
+
+	if *orgID == "" {
+		log.Fatal("-organization-id is required, e.g., 'PSDGB-FCA-123456'")
+	}
+
+	if *commonName == "" {
+		log.Fatal("-common-name is required, e.g., '0123456789abcdef'")
+	}
 
 	t, err := typeFromFlag(*qcType)
 	if err != nil {
