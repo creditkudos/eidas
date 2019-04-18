@@ -1,3 +1,6 @@
+// Package qcstatements contains functions for building and extracting qualified
+// statements for PSD2 qualified certificates.
+// See ETSI TS 119 495 v1.2.1 and RFC 3739.
 package qcstatements
 
 import (
@@ -27,6 +30,8 @@ type CompetentAuthority struct {
 	ID string
 }
 
+// CompetentAuthorityForCountryCode returns the correct competent authority
+// string, e.g., "GB-FCA", based on the given country code.
 func CompetentAuthorityForCountryCode(code string) (*CompetentAuthority, error) {
 	if ca, ok := caMap[code]; ok {
 		return ca, nil
@@ -203,7 +208,7 @@ type rawRoles struct {
 	Roles []asn1.RawValue
 }
 
-// Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement. qcType should be one of ESignType, ESEALType or WEBType.
+// Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement. qcType should be one of QWACType or QSEALType.
 func Serialize(roles []Role, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]byte, error) {
 	r := make([]asn1.RawValue, len(roles)*2)
 	for i, rv := range roles {
@@ -266,7 +271,7 @@ func Dump(d []byte) error {
 	return nil
 }
 
-// Dump outputs to stdout a human-readable representation of a hex encoded qualified statement.
+// DumpFromHex outputs to stdout a human-readable representation of a hex encoded qualified statement.
 func DumpFromHex(h string) error {
 	d, err := hex.DecodeString(h)
 	if err != nil {
