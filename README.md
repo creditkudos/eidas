@@ -2,6 +2,17 @@
 Tools for reading and creating eIDAS certificate signing requests
 
 ## Generating a Certificate Signing Request (CSR)
+
+### With Docker:
+```bash
+docker run -v $(pwd):/work creditkudos/eidas \
+  -country-code GB \
+  -organization-name "Your Organization Limited" \
+  -organization-id PSDGB-FCA-123456 \
+  -common-name 0123456789abcdef
+```
+
+### With go (requires go 1.11 or higher):
 ```bash
 go run cmd/cli/main.go \
   -country-code GB \
