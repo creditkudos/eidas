@@ -3,7 +3,11 @@ Tools for reading and creating eIDAS certificate signing requests
 
 ## Generating a Certificate Signing Request (CSR)
 ```bash
-go run cmd/cli/main.go
+go run cmd/cli/main.go \
+  -country-code GB \
+  -organization-name "Your Organization Limited" \
+  -organization-id PSDGB-FCA-123456 \
+  -common-name 0123456789abcdef
 ```
 
 You can see the available flags with
@@ -15,7 +19,7 @@ By default this will generate two files: `out.csr` and `out.key` containing the 
 
 To print out the details of the CSR for debugging, run:
 ```
-openssl req -in out.csr -text
+openssl req -in out.csr -text -noout -nameopt multiline
 ```
 
 ## Notes on CSR format
