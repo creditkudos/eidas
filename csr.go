@@ -105,8 +105,8 @@ func keyUsageExtension(usages []x509.KeyUsage) pkix.Extension {
 func extendedKeyUsageForType(t asn1.ObjectIdentifier) ([]asn1.ObjectIdentifier, error) {
 	if t.Equal(qcstatements.QWACType) {
 		return []asn1.ObjectIdentifier{
-			TLSWWWServerAuthUsage,
-			TLSWWWClientAuthUsage,
+			tLSWWWServerAuthUsage,
+			tLSWWWClientAuthUsage,
 		}, nil
 	} else if t.Equal(qcstatements.QSEALType) {
 		return []asn1.ObjectIdentifier{}, nil
@@ -115,12 +115,8 @@ func extendedKeyUsageForType(t asn1.ObjectIdentifier) ([]asn1.ObjectIdentifier, 
 }
 
 var (
-	TLSWWWServerAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1}
-	TLSWWWClientAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2}
-	CodeSigningUsage      = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 3}
-	EmailProtectionUsage  = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 4}
-	TimeStampingUsage     = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 8}
-	OCSPSigning           = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 9}
+	tLSWWWServerAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 1}
+	tLSWWWClientAuthUsage = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 3, 2}
 )
 
 func extendedKeyUsageExtension(usages []asn1.ObjectIdentifier) pkix.Extension {
@@ -147,6 +143,7 @@ func subjectKeyIdentifier(key rsa.PublicKey) pkix.Extension {
 	}
 }
 
+// QCStatementsExt represents the qcstatements x509 extension id.
 var QCStatementsExt = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 1, 3}
 
 func qcStatementsExtension(data []byte) pkix.Extension {
@@ -166,19 +163,19 @@ var oidCommonName = asn1.ObjectIdentifier{2, 5, 4, 3}
 func buildSubject(countryCode string, orgName string, commonName string, orgID string) ([]byte, error) {
 	s := pkix.Name{
 		ExtraNames: []pkix.AttributeTypeAndValue{
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidCountryCode,
 				Value: countryCode,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidOrganizationName,
 				Value: orgName,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidOrganizationID,
 				Value: orgID,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidCommonName,
 				Value: commonName,
 			},

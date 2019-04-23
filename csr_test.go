@@ -34,8 +34,8 @@ func TestExtendedKeyUsage(t *testing.T) {
 		usage, err := extendedKeyUsageForType(qcstatements.QWACType)
 		So(err, ShouldBeNil)
 		So(usage, ShouldResemble, []asn1.ObjectIdentifier{
-			TLSWWWServerAuthUsage,
-			TLSWWWClientAuthUsage,
+			tLSWWWServerAuthUsage,
+			tLSWWWClientAuthUsage,
 		})
 	})
 }
@@ -67,11 +67,11 @@ func TestBuildCSR(t *testing.T) {
 		So(names[3].Value, ShouldEqual, "Foo Name")
 
 		exts := csr.Extensions
-		So(exts, shouldContainId, QCStatementsExt)
+		So(exts, shouldContainID, QCStatementsExt)
 		// Should have key usage
-		So(exts, shouldContainId, asn1.ObjectIdentifier{2, 5, 29, 15})
+		So(exts, shouldContainID, asn1.ObjectIdentifier{2, 5, 29, 15})
 		// Should have extended key usage.
-		So(exts, shouldContainId, asn1.ObjectIdentifier{2, 5, 29, 37})
+		So(exts, shouldContainID, asn1.ObjectIdentifier{2, 5, 29, 37})
 		for _, ext := range exts {
 			if ext.Id.Equal(QCStatementsExt) {
 				roles, caName, caID, err := qcstatements.Extract(ext.Value)
@@ -84,7 +84,7 @@ func TestBuildCSR(t *testing.T) {
 	})
 }
 
-func shouldContainId(actual interface{}, expected ...interface{}) string {
+func shouldContainID(actual interface{}, expected ...interface{}) string {
 	exts, ok := actual.([]pkix.Extension)
 	if !ok {
 		return "Expected []x509.Extension"

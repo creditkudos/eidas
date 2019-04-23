@@ -42,127 +42,127 @@ func CompetentAuthorityForCountryCode(code string) (*CompetentAuthority, error) 
 // Maps ISO-3166-1 alpha-2 codes to a CompetentAuthority.
 // See ETSI TS 119 495 V1.2.1 (2018-11) Annex D.
 var caMap = map[string]*CompetentAuthority{
-	"AT": &CompetentAuthority{
+	"AT": {
 		ID:   "AT-FMA",
 		Name: "Austria Financial Market Authority",
 	},
-	"BE": &CompetentAuthority{
+	"BE": {
 		ID:   "BE-NBB",
 		Name: "National Bank of Belgium",
 	},
-	"BG": &CompetentAuthority{
+	"BG": {
 		ID:   "BG-BNB",
 		Name: "Bulgarian National Bank",
 	},
-	"HR": &CompetentAuthority{
+	"HR": {
 		ID:   "HR-CNB",
 		Name: "Croatian National Bank",
 	},
-	"CY": &CompetentAuthority{
+	"CY": {
 		ID:   "CY-CBC",
 		Name: "Central Bank of Cyprus",
 	},
-	"CZ": &CompetentAuthority{
+	"CZ": {
 		ID:   "CZ-CNB",
 		Name: "Czech National Bank",
 	},
-	"DK": &CompetentAuthority{
+	"DK": {
 		ID:   "DK-DFSA",
 		Name: "Danish Financial Supervisory Authority",
 	},
-	"EE": &CompetentAuthority{
+	"EE": {
 		ID:   "EE-FI",
 		Name: "Estonia Financial Supervisory Authority",
 	},
-	"FI": &CompetentAuthority{
+	"FI": {
 		ID:   "FI-FINFSA",
 		Name: "Finnish Financial Supervisory Authority",
 	},
-	"FR": &CompetentAuthority{
+	"FR": {
 		ID:   "FR-ACPR",
 		Name: "Prudential Supervisory and Resolution Authority",
 	},
-	"DE": &CompetentAuthority{
+	"DE": {
 		ID:   "DE-BAFIN",
 		Name: "Federal Financial Supervisory Authority",
 	},
-	"GR": &CompetentAuthority{
+	"GR": {
 		ID:   "GR-BOG",
 		Name: "Bank of Greece",
 	},
-	"HU": &CompetentAuthority{
+	"HU": {
 		ID:   "HU-CBH",
 		Name: "Central Bank of Hungary",
 	},
-	"IS": &CompetentAuthority{
+	"IS": {
 		ID:   "IS-FME",
 		Name: "Financial Supervisory Authority",
 	},
-	"IE": &CompetentAuthority{
+	"IE": {
 		ID:   "IE-CBI",
 		Name: "Central Bank of Ireland",
 	},
-	"IT": &CompetentAuthority{
+	"IT": {
 		ID:   "IT-BI",
 		Name: "Bank of Italy",
 	},
-	"LI": &CompetentAuthority{
+	"LI": {
 		ID:   "LI-FMA",
 		Name: "Financial Market Authority Liechtenstein",
 	},
-	"LV": &CompetentAuthority{
+	"LV": {
 		ID:   "LV-FCMC",
 		Name: "Financial and Capital Markets Commission",
 	},
-	"LT": &CompetentAuthority{
+	"LT": {
 		ID:   "LT-BL",
 		Name: "Bank of Lithuania",
 	},
-	"LU": &CompetentAuthority{
+	"LU": {
 		ID:   "LU-CSSF",
 		Name: "Commission for the Supervision of Financial Sector",
 	},
-	"NO": &CompetentAuthority{
+	"NO": {
 		ID:   "NO-FSA",
 		Name: "The Financial Supervisory Authority of Norway",
 	},
-	"MT": &CompetentAuthority{
+	"MT": {
 		ID:   "MT-MFSA",
 		Name: "Malta Financial Services Authority",
 	},
-	"NL": &CompetentAuthority{
+	"NL": {
 		ID:   "NL-DNB",
 		Name: "The Netherlands Bank",
 	},
-	"PL": &CompetentAuthority{
+	"PL": {
 		ID:   "PL-PFSA",
 		Name: "Polish Financial Supervision Authority",
 	},
-	"PT": &CompetentAuthority{
+	"PT": {
 		ID:   "PT-BP",
 		Name: "Bank of Portugal",
 	},
-	"RO": &CompetentAuthority{
+	"RO": {
 		ID:   "RO-NBR",
 		Name: "National bank of Romania",
 	},
-	"SK": &CompetentAuthority{
+	"SK": {
 		ID:   "SK-NBS",
 		Name: "National Bank of Slovakia",
 	},
-	"SI": &CompetentAuthority{
+	"SI": {
 		ID:   "SI-BS",
 		Name: "Bank of Slovenia",
 	},
-	"ES": &CompetentAuthority{
+	"ES": {
 		ID:   "ES-BE",
 		Name: "Bank of Spain",
 	},
-	"SE": &CompetentAuthority{
+	"SE": {
 		ID:   "SE-FINA",
 		Name: "Swedish Financial Supervision Authority",
 	},
-	"GB": &CompetentAuthority{
+	"GB": {
 		ID:   "GB-FCA",
 		Name: "Financial Conduct Authority",
 	},
