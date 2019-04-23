@@ -166,19 +166,19 @@ var oidCommonName = asn1.ObjectIdentifier{2, 5, 4, 3}
 func buildSubject(countryCode string, orgName string, commonName string, orgID string) ([]byte, error) {
 	s := pkix.Name{
 		ExtraNames: []pkix.AttributeTypeAndValue{
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidCountryCode,
 				Value: countryCode,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidOrganizationName,
 				Value: orgName,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidOrganizationID,
 				Value: orgID,
 			},
-			pkix.AttributeTypeAndValue{
+			{
 				Type:  oidCommonName,
 				Value: commonName,
 			},
