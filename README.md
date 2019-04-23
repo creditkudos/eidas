@@ -8,7 +8,7 @@ Tools for reading and creating eIDAS certificate signing requests
 
 ### With Docker:
 ```bash
-docker run -v $(pwd):/work creditkudos/eidas \
+docker run -v $(pwd):/work --network none creditkudos/eidas \
   -country-code GB \
   -organization-name "Your Organization Limited" \
   -organization-id PSDGB-FCA-123456 \
