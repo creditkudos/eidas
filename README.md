@@ -18,6 +18,9 @@ docker run -v $(pwd):/work --network none creditkudos/eidas \
 ### With go (requires go 1.11 or higher):
 ```bash
 go get github.com/creditkudos/eidas/cmd/cli
+```
+
+```bash
 go run github.com/creditkudos/eidas/cmd/cli \
   -country-code GB \
   -organization-name "Your Organization Limited" \
