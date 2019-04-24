@@ -17,7 +17,8 @@ docker run -v $(pwd):/work --network none creditkudos/eidas \
 
 ### With go (requires go 1.11 or higher):
 ```bash
-go run cmd/cli/main.go \
+go get github.com/creditkudos/eidas/cmd/cli
+go run github.com/creditkudos/eidas/cmd/cli \
   -country-code GB \
   -organization-name "Your Organization Limited" \
   -organization-id PSDGB-FCA-123456 \
@@ -26,7 +27,7 @@ go run cmd/cli/main.go \
 
 You can see the available flags with
 ```
-go run cmd/cli/main.go -help
+go run github.com/creditkudos/eidas/cmd/cli -help
 ```
 
 By default this will generate two files: `out.csr` and `out.key` containing the CSR and the private key, respectively.
