@@ -1,5 +1,6 @@
 [![CircleCI](https://circleci.com/gh/creditkudos/eidas.svg?style=svg)](https://circleci.com/gh/creditkudos/eidas)
 [![GoDoc](https://godoc.org/github.com/creditkudos/eidas?status.svg)](https://godoc.org/github.com/creditkudos/eidas)
+[![Go Report Card](https://goreportcard.com/badge/github.com/creditkudos/eidas)](https://goreportcard.com/report/github.com/creditkudos/eidas)
 
 # eIDAS
 Tools for reading and creating eIDAS certificate signing requests
