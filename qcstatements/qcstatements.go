@@ -9,16 +9,14 @@ import (
 	"fmt"
 )
 
+// Role represents the role of the Payment Service Provider (PSP).
 type Role string
 
+// Standard PSP roles.
 const (
-	// Account servicing role.
 	RoleAccountServicing Role = "PSP_AS"
-	// Payment initiation role.
 	RolePaymentInitiation Role = "PSP_PI"
-	// Account information role.
 	RoleAccountInformation Role = "PSP_AI"
-	// Issuing of card-based payment instruments role.
 	RolePaymentInstruments Role = "PSP_IC"
 )
 
@@ -186,7 +184,9 @@ type qcType struct {
 }
 
 var (
+	// QSEALType is the ASN.1 object identifier for QSeal certificates.
 	QSEALType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
+	// QWACType is the ASN.1 object identifier for QWA certificates.
 	QWACType  = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
 )
 
