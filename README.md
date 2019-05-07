@@ -29,6 +29,13 @@ go run github.com/creditkudos/eidas/cmd/cli \
   -common-name 0123456789abcdef
 ```
 
+### Open Banking Flags
+* `-common-name` should be the same as the `organisation_id` field from your entry in the Open Banking Directory.
+* `-organization-id` should be in the form of `PSD<Regulator Country Code>-<Regulator>-<Unique ID>`
+* `-organization-name` should be your official company name.
+* `-country-code` should be an ISO 3166-1 alpha-2 country code.
+
+### Other flags
 You can see the available flags with
 ```
 go run github.com/creditkudos/eidas/cmd/cli -help
