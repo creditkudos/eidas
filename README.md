@@ -43,6 +43,8 @@ go run github.com/creditkudos/eidas/cmd/cli -help
 
 By default this will generate two files: `out.csr` and `out.key` containing the CSR and the private key, respectively.
 
+It will also print the SHA256 sum of the CSR to stdout.
+
 To print out the details of the CSR for debugging, run:
 ```
 openssl req -in out.csr -text -noout -nameopt multiline
