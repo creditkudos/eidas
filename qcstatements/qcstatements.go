@@ -14,8 +14,8 @@ type Role string
 
 // Standard PSP roles.
 const (
-	RoleAccountServicing Role = "PSP_AS"
-	RolePaymentInitiation Role = "PSP_PI"
+	RoleAccountServicing   Role = "PSP_AS"
+	RolePaymentInitiation  Role = "PSP_PI"
 	RoleAccountInformation Role = "PSP_AI"
 	RolePaymentInstruments Role = "PSP_IC"
 )
@@ -187,7 +187,7 @@ var (
 	// QSEALType is the ASN.1 object identifier for QSeal certificates.
 	QSEALType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 2}
 	// QWACType is the ASN.1 object identifier for QWA certificates.
-	QWACType  = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
+	QWACType = asn1.ObjectIdentifier{0, 4, 0, 1862, 1, 6, 3}
 )
 
 type qcStatement struct {
@@ -196,45 +196,29 @@ type qcStatement struct {
 }
 
 type rolesInfo struct {
-	Roles  rawRoles
+	Roles  []role
 	CAName string `asn1:"utf8"`
 	CAID   string `asn1:"utf8"`
 }
 
-type rawRoles struct {
+type role struct {
 	// eIDAS roles consist a sequence of an object identifier and a UTF8 string for each role
-	// Unfortunately, the asn1 package cannot cope with non-uniform arrays so RawValues must
-	// be used here and then decoded further elsewhere.
-	Roles []asn1.RawValue
+	OID  asn1.ObjectIdentifier
+	Role Role
 }
 
 // Serialize will serialize the given roles and CA information into a DER encoded ASN.1 qualified statement. qcType should be one of QWACType or QSEALType.
 func Serialize(roles []Role, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]byte, error) {
-	r := make([]asn1.RawValue, len(roles)*2)
+	r := make([]role, len(roles))
 	for i, rv := range roles {
 		if _, ok := roleMap[rv]; !ok {
 			return nil, fmt.Errorf("Unknown role: %s", rv)
 		}
-		d, err := asn1.Marshal(asn1.ObjectIdentifier(
-			[]int{0, 4, 0, 19495, 1, roleMap[rv]}))
-		if err != nil {
-			return nil, fmt.Errorf("Failed to encode OID for role %s: %v", rv, err)
-		}
-		r[i*2] = asn1.RawValue{
-			Class:      asn1.ClassUniversal,
-			Tag:        asn1.TagOID,
-			IsCompound: false,
-			FullBytes:  d,
-		}
-		ds, err := asn1.Marshal(rv)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to encode string for role %s: %v", rv, err)
-		}
-		r[i*2+1] = asn1.RawValue{
-			Class:      asn1.ClassUniversal,
-			Tag:        asn1.TagUTF8String,
-			IsCompound: false,
-			FullBytes:  ds,
+		oid := asn1.ObjectIdentifier([]int{0, 4, 0, 19495, 1, roleMap[rv]})
+
+		r[i] = role{
+			OID:  oid,
+			Role: rv,
 		}
 	}
 
@@ -246,9 +230,7 @@ func Serialize(roles []Role, ca CompetentAuthority, t asn1.ObjectIdentifier) ([]
 		qcStatement{
 			OID: asn1.ObjectIdentifier{0, 4, 0, 19495, 2},
 			RolesInfo: rolesInfo{
-				Roles: rawRoles{
-					Roles: r,
-				},
+				Roles:  r,
 				CAName: ca.Name,
 				CAID:   ca.ID,
 			},
@@ -290,15 +272,8 @@ func Extract(data []byte) ([]Role, string, string, error) {
 	}
 
 	roles := make([]Role, 0)
-	for _, v := range root.QcStatement.RolesInfo.Roles.Roles {
-		if v.Tag == asn1.TagUTF8String {
-			var dec Role
-			_, err := asn1.Unmarshal(v.FullBytes, &dec)
-			if err != nil {
-				return nil, "", "", fmt.Errorf("failed to decode eIDAS role: %v", err)
-			}
-			roles = append(roles, dec)
-		}
+	for _, role := range root.QcStatement.RolesInfo.Roles {
+		roles = append(roles, role.Role)
 	}
 
 	return roles, root.QcStatement.RolesInfo.CAName, root.QcStatement.RolesInfo.CAID, nil
