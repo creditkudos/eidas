@@ -4,7 +4,7 @@ orbs:
 jobs:
   docker_build:
     docker:
-      - image: docker:dind
+      - image: docker:20-dind
     steps:
       - checkout
       - setup_remote_docker
