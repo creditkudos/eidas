@@ -1,4 +1,4 @@
-FROM golang:1.12 as builder
+FROM golang:1.17-buster as builder
 MAINTAINER Credit Kudos Engineering <engineering@creditkudos.com>
 
 RUN mkdir /build
