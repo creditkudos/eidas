@@ -16,10 +16,19 @@ import (
 	"github.com/creditkudos/eidas/qcstatements"
 )
 
+type CertificateOption func(*x509.CertificateRequest)
+
+// WithDNSName adds the given domain as a Subject Alternate Name to the CSR.
+func WithDNSName(domain string) CertificateOption {
+	return func(req *x509.CertificateRequest) {
+		req.DNSNames = append(req.DNSNames, domain)
+	}
+}
+
 // GenerateCSR builds a certificate signing request for an organization.
 // qcType should be one of qcstatements.QSEALType or qcstatements.QWACType.
 func GenerateCSR(
-	countryCode string, orgName string, orgID string, commonName string, roles []qcstatements.Role, qcType asn1.ObjectIdentifier) ([]byte, *rsa.PrivateKey, error) {
+	countryCode string, orgName string, orgID string, commonName string, roles []qcstatements.Role, qcType asn1.ObjectIdentifier, opts ...CertificateOption) ([]byte, *rsa.PrivateKey, error) {
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate key pair: %v", err)
@@ -56,13 +65,17 @@ func GenerateCSR(
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build CSR subject: %v", err)
 	}
-	csr, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
+	req := &x509.CertificateRequest{
 		Version:            0,
 		RawSubject:         subject,
 		SignatureAlgorithm: x509.SHA256WithRSA,
 		PublicKeyAlgorithm: x509.RSA,
 		ExtraExtensions:    extensions,
-	}, key)
+	}
+	for _, opt := range opts {
+		opt(req)
+	}
+	csr, err := x509.CreateCertificateRequest(rand.Reader, req, key)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate csr: %v", err)
 	}

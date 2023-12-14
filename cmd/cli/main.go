@@ -26,6 +26,8 @@ var qcType = flag.String("type", "QWAC", "Certificate type; one of QWAC or QSEAL
 var outCSR = flag.String("csr", "out.csr", "Output file for CSR")
 var outKey = flag.String("key", "out.key", "Output file for private key")
 
+var dnsNames = flag.String("dns-names", "", "Comma separated list of domain names to add as Subject Alternate Names")
+
 func writeCSR(path string, data []byte) (err error) {
 	fmt.Printf("%x\n", sha256.Sum256(data))
 
@@ -107,8 +109,16 @@ func main() {
 		r = append(r, qcstatements.Role(role))
 	}
 
+	var opts []eidas.CertificateOption
+	if *dnsNames != "" {
+		names := strings.Split(*dnsNames, ",")
+		for _, name := range names {
+			opts = append(opts, eidas.WithDNSName(strings.TrimSpace(name)))
+		}
+	}
+
 	d, key, err := eidas.GenerateCSR(
-		*countryCode, *orgName, *orgID, *commonName, r, t)
+		*countryCode, *orgName, *orgID, *commonName, r, t, opts...)
 	if err != nil {
 		log.Fatalf(":-( %v", err)
 	}
