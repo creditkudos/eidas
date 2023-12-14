@@ -82,6 +82,17 @@ func TestBuildCSR(t *testing.T) {
 			}
 		}
 	})
+
+	Convey("CSR with DNS name", t, func() {
+		data, key, err := GenerateCSR("GB", "Foo Org", "Foo Org ID", "Foo Name", []qcstatements.Role{qcstatements.RoleAccountInformation}, qcstatements.QWACType, WithDNSName("foo.example.com"), WithDNSName("bar.example.com"))
+		So(err, ShouldBeNil)
+		So(key, ShouldNotBeNil)
+		So(data, ShouldNotBeNil)
+
+		csr, err := x509.ParseCertificateRequest(data)
+		So(err, ShouldBeNil)
+		So(csr.DNSNames, ShouldResemble, []string{"foo.example.com", "bar.example.com"})
+	})
 }
 
 func shouldContainID(actual interface{}, expected ...interface{}) string {
